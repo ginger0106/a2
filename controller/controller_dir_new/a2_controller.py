@@ -85,7 +85,7 @@ class a2_controller():
                 msg = await self.client_msg_que.get ()
                 # print(f'from client {i}',msg)
                 self.history_list.append (msg)
-                log = f'INFO:[SETP2][SOCKET] GET msg {[i]} from Client!'
+                log = f'INFO:[SETP2][SOCKET] GET msg {[i]}region{msg["location_id"]} from Client!'
                 self.save_log (log)
             # log = 'INFO:[SETP2][SOCKET] GET msg from Queue!'
             # self.save_log (log)
