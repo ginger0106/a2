@@ -58,7 +58,7 @@ class IperfClient():
         try:
             self.bw =json.loads(stdout.decode())['end']['sum_received']['bits_per_second']/(8*1e3) ##KBps
         except KeyError:
-            asyncio.sleep(10)
+            await asyncio.sleep(10)
 
     def pop_bw(self,addr):
         sum_bw = 0
