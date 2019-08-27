@@ -339,7 +339,8 @@ class allocator():
                             if q != qq or kk != k:
                                 qq = q
                                 kk = k
-                                re[k, q] = {}
+                                resultt = {}
+
                             for j in range (self.J):
                                 # re[k, q] = {}
                                 # if re[k, q] == {}:
@@ -354,6 +355,7 @@ class allocator():
                                                                   'batch': h, 'prob': y[s, k, i, j, q, h]}
                                         re[k,q] = resultt
                                         item[k,q]={'writer':Qt[k][q]['writer'],'result':re[k,q]}
+
                                     # result[f'{k}_dcp_{i}'] = {'url':url_list,'model_ver':i,'data_ver':j,'batch':h,'prob':y[s, k, i, j, q,h]}
                                     # re[k,q] = result
                                     # item[k,q]={'writer':Qt[k][q]['writer'],'result':re[k,q]}
