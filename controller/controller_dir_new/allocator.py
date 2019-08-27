@@ -317,7 +317,7 @@ class allocator():
         url_list =[]
         re = {}
         kk = ''
-        qq= 0
+        qq= -1
         resultt= {}
         ss = ''
         for s in S:
