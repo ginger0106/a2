@@ -316,13 +316,18 @@ class allocator():
         result ={}
         url_list =[]
         re = {}
-        # for s in S:
-        #     port = 8500
-        for k in K:
-            for q in range (len (Qt[k])):
-                result = {}
-                for s in S:
-                    port = 8500
+        kk = ''
+        qq= 0
+        ss = ''
+        for s in S:
+            port = 8500
+            for k in K:
+                for q in range (len (Qt[k])):
+                    re[k,q] = {}
+                    if re[k,q] == {}:
+                        result = {}
+                # for s in S:
+                #     port = 8500
                     for i in range (I):
                         for h in self.adaptive_H(self.device_type,k,i):
                             url_list = []
@@ -333,7 +338,8 @@ class allocator():
                             for j in range (self.J):
                                 if float(y[s, k, i, j, q,h]) >0:
                                     result[f'{k}_dcp_{i}'] = {'url':url_list,'model_ver':i,'data_ver':j,'batch':h,'prob':y[s, k, i, j, q,h]}
-                                    item[k,q]={'writer':Qt[k][q]['writer'],'result':result}
+                                    re[k,q] = result
+                                    item[k,q]={'writer':Qt[k][q]['writer'],'result':re[k,q]}
                                     schedule_for_all_client_dict[k,q]=item[k,q]
         # print(schedule_for_all_client_dict)
         return schedule_for_all_client_dict
