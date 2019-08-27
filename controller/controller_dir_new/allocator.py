@@ -328,8 +328,8 @@ class allocator():
                         for q in range (len (Qt[k])):
                             for j in range (self.J):
                                 if float(y[s, k, i, j, q,h]) >0:
-                                    result[f'{k}_dcp_{i}'] = {'url':url_list,'model_ver':i,'data_ver':j,'batch':h,'prob':y[s, k, i, j, q,h]}
-                                    item[k,q]={'writer':Qt[k][q]['writer'],'result':result}
+                                    result[k,q,f'{k}_dcp_{i}'] = {'url':url_list,'model_ver':i,'data_ver':j,'batch':h,'prob':y[s, k, i, j, q,h]}
+                                    item[k,q]={'writer':Qt[k][q]['writer'],'result':result[k,q]}
                                     schedule_for_all_client_dict[k,q]=item[k,q]
         # print(schedule_for_all_client_dict)
         return schedule_for_all_client_dict
