@@ -315,13 +315,14 @@ class allocator():
         item ={}
         result ={}
         url_list =[]
-        re = {}
+        # re = {}
         kk = ''
         qq= 0
         ss = ''
         for s in S:
             port = 8500
             for k in K:
+
 
                 # for s in S:
                 #     port = 8500
@@ -334,9 +335,14 @@ class allocator():
                             port += x[s,k,i,h]
                         for j in range (self.J):
                             for q in range (len (Qt[k])):
-                                re[k, q] = {}
-                                if re[k, q] == {}:
+                                if q != qq or k != kk:
+                                    qq = q
+                                    kk = k
                                     result = {}
+
+                                # re[k, q] = {}
+                                # if re[k, q] == {}:
+                                #     result = {}
                                 if float(y[s, k, i, j, q,h]) >0:
                                     result[f'{k}_dcp_{i}'] = {'url':url_list,'model_ver':i,'data_ver':j,'batch':h,'prob':y[s, k, i, j, q,h]}
                                     # re[k,q] = result
