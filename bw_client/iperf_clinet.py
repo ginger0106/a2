@@ -54,6 +54,7 @@ class IperfClient():
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE)
         stdout, stderr = await proc.communicate()
+        print(json.loads(stdout.decode()))
         self.bw =json.loads(stdout.decode())['end']['sum_received']['bits_per_second']/(8*1e3) ##KBps
 
     def pop_bw(self,addr):
