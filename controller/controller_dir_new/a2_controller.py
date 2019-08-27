@@ -128,7 +128,7 @@ class a2_controller():
 
     async def server(self):
         server = await asyncio.start_server(
-            self.read_msg_from_client, self.con_addr, self.con_port,limit=2**64)
+            self.read_msg_from_client, self.con_addr, self.con_port,limit=2**128)
         addr = server.sockets[0].getsockname()
         print(f'Serving on {addr}')
         async with server:
