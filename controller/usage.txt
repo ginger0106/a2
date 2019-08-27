@@ -1,0 +1,2 @@
+python3.7 controller_main.py -a 127.0.0.1 -p 8888 -x [adapative_m/adapative_d/a2/heu] -t 60 -d gpu -n 30 -debug [test/aws/aws_test]
+
