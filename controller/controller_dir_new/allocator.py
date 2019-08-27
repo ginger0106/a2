@@ -338,7 +338,7 @@ class allocator():
                             if q != qq and k != kk:
                                 qq = q
                                 kk = k
-                                re[k, q] = {}
+                                result = {}
                             for j in range (self.J):
                                 # re[k, q] = {}
                                 # if re[k, q] == {}:
