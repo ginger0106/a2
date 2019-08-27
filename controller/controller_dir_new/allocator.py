@@ -354,9 +354,18 @@ class allocator():
                                         resultt[k,q,f'{k}_dcp_{i}'] = {'url': url_list, 'model_ver': i, 'data_ver': j,
                                                                   'batch': h, 'prob': y[s, k, i, j, q, h]}
                                         # re[k,q] = resultt
-                                        re = {jj:resultt[k,q,f'{k}_dcp_{i}'] for jj in list(resultt.keys())[0][2]}
+                                        for key,items in resultt.items():
+                                            if (k, q) in key[:2]:
+                                                name = key[2]
+                                                re[name] = items
+                                             # = {list (resultt.keys ())[0][:2]: resultt[k, q, f'{k}_dcp_{i}'] for jj in
+                                             #      list (resultt.keys ())[0][:2]}
+
                                         # re[k,q][f'{k}_dcp_{i}'] = {'url': url_list, 'model_ver': i, 'data_ver': j,
-                                        #                           'batch': h, 'prob': y[s, k, i, j, q, h]}
+
+                                        # re = {list(resultt.keys())[0][:2]:resultt[k,q,f'{k}_dcp_{i}'] for jj in list(resultt.keys())[0][:2]}
+                                        # re[k,q][f'{k}_dcp_{i}'] = {'url': url_list, 'model_ver': i, 'data_ver': j,
+                                        #                           'batch': h, 'prob': y[s, k
                                         item[k,q]={'writer':Qt[k][q]['writer'],'result':re}
 
                                     # result[f'{k}_dcp_{i}'] = {'url':url_list,'model_ver':i,'data_ver':j,'batch':h,'prob':y[s, k, i, j, q,h]}
