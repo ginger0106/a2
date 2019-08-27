@@ -336,7 +336,7 @@ class allocator():
                             port += x[s,k,i,h]
                         for q in range (len (Qt[k])):
                             # re[k, q] = {}
-                            if q != qq and kk != k:
+                            if q != qq:
                                 qq = q
                                 kk = k
                                 resultt = {}
