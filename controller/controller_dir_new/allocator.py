@@ -346,27 +346,27 @@ class allocator():
                                 # if re[k, q] == {}:
                                 #     result = {}
                                 if float(y[s, k, i, j, q,h]) >0:
-                                    # if y[s, k, i, j, q,h] ==1.0:
-                                    #     result = {f'{k}_dcp_{i}':{'url':url_list,'model_ver':i,'data_ver':j,'batch':h,'prob':y[s, k, i, j, q,h]}}
-                                    #     item[k,q]={'writer':Qt[k][q]['writer'],'result':result}
-                                    #     schedule_for_all_client_dict[k, q] = item[k, q]
-                                    # else:
-                                    resultt[k,q,f'{k}_dcp_{i}'] = {'url': url_list, 'model_ver': i, 'data_ver': j,
-                                                              'batch': h, 'prob': y[s, k, i, j, q, h]}
-                                    # re[k,q] = resultt
-                                    for key,items in resultt.items():
-                                        if (k,q) in [key[:2]]:
-                                            name = key[2]
-                                            re[name] = items
-                                         # = {list (resultt.keys ())[0][:2]: resultt[k, q, f'{k}_dcp_{i}'] for jj in
-                                         #      list (resultt.keys ())[0][:2]}
+                                    if y[s, k, i, j, q,h] ==1.0:
+                                        result = {f'{k}_dcp_{i}':{'url':url_list,'model_ver':i,'data_ver':j,'batch':h,'prob':y[s, k, i, j, q,h]}}
+                                        item[k,q]={'writer':Qt[k][q]['writer'],'result':result}
+                                        schedule_for_all_client_dict[k, q] = item[k, q]
+                                    else:
+                                        resultt[k,q,f'{k}_dcp_{i}'] = {'url': url_list, 'model_ver': i, 'data_ver': j,
+                                                                  'batch': h, 'prob': y[s, k, i, j, q, h]}
+                                        # re[k,q] = resultt
+                                        for key,items in resultt.items():
+                                            if (k,q) in [key[:2]]:
+                                                name = key[2]
+                                                re[name] = items
+                                             # = {list (resultt.keys ())[0][:2]: resultt[k, q, f'{k}_dcp_{i}'] for jj in
+                                             #      list (resultt.keys ())[0][:2]}
 
-                                    # re[k,q][f'{k}_dcp_{i}'] = {'url': url_list, 'model_ver': i, 'data_ver': j,
+                                        # re[k,q][f'{k}_dcp_{i}'] = {'url': url_list, 'model_ver': i, 'data_ver': j,
 
-                                    # re = {list(resultt.keys())[0][:2]:resultt[k,q,f'{k}_dcp_{i}'] for jj in list(resultt.keys())[0][:2]}
-                                    # re[k,q][f'{k}_dcp_{i}'] = {'url': url_list, 'model_ver': i, 'data_ver': j,
-                                    #                           'batch': h, 'prob': y[s, k
-                                    item[k,q]={'writer':Qt[k][q]['writer'],'result':re}
+                                        # re = {list(resultt.keys())[0][:2]:resultt[k,q,f'{k}_dcp_{i}'] for jj in list(resultt.keys())[0][:2]}
+                                        # re[k,q][f'{k}_dcp_{i}'] = {'url': url_list, 'model_ver': i, 'data_ver': j,
+                                        #                           'batch': h, 'prob': y[s, k
+                                        item[k,q]={'writer':Qt[k][q]['writer'],'result':re}
 
                                     # result[f'{k}_dcp_{i}'] = {'url':url_list,'model_ver':i,'data_ver':j,'batch':h,'prob':y[s, k, i, j, q,h]}
                                     # re[k,q] = result
