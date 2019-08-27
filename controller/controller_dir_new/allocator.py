@@ -334,18 +334,19 @@ class allocator():
                             url_list = [self.url_generator (s,port+x,k,i)for x in range(int(x[s,k,i,h])) ]
                             port += x[s,k,i,h]
                         for q in range (len (Qt[k])):
-                            # if q != qq and k != kk:
-                            #     qq = q
-                            #     kk = k
-                            #     result = {}
+                            # re[k, q] = {}
+                            if q != qq and k != kk:
+                                qq = q
+                                kk = k
+                                re[k, q] = {}
                             for j in range (self.J):
                                 # re[k, q] = {}
                                 # if re[k, q] == {}:
                                 #     result = {}
                                 if float(y[s, k, i, j, q,h]) >0:
-                                    result[k,q][f'{k}_dcp_{i}'] = {'url':url_list,'model_ver':i,'data_ver':j,'batch':h,'prob':y[s, k, i, j, q,h]}
-                                    # re[k,q][] = result
-                                    item[k,q]={'writer':Qt[k][q]['writer'],'result':result[k,q]}
+                                    result[f'{k}_dcp_{i}'] = {'url':url_list,'model_ver':i,'data_ver':j,'batch':h,'prob':y[s, k, i, j, q,h]}
+                                    re[k,q] = result
+                                    item[k,q]={'writer':Qt[k][q]['writer'],'result':re[k,q]}
                                     schedule_for_all_client_dict[k,q]=item[k,q]
         # print(schedule_for_all_client_dict)
         return schedule_for_all_client_dict
