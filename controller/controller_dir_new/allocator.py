@@ -192,7 +192,7 @@ class allocator():
 
         for s in S:
             for k in K:
-                for i in range(I):
+                for i in  range(I):
                     for h in self.adaptive_H(self.device_type,k,i):
                         m.addConstr (quicksum (quicksum ( Qt[k][q]['Y']*IMG_SIZE[j] * y_skijqh[s, k, i, j, q,h]
                                                          for j in range(self.J))
@@ -312,6 +312,8 @@ class allocator():
 
     def process_gurobi_result_y(self,K,I,S,Qt,x,y):
         schedule_for_all_client_dict = {}
+        item ={}
+        result ={}
         url_list =[]
         for s in S:
             port = 8500
@@ -326,9 +328,9 @@ class allocator():
                         for q in range (len (Qt[k])):
                             for j in range (self.J):
                                 if float(y[s, k, i, j, q,h]) >0:
-                                    result = {f'{k}_dcp_{i}':{'url':url_list,'model_ver':i,'data_ver':j,'batch':h,'prob':y[s, k, i, j, q,h]}}
-                                    item = {'writer':Qt[k][q]['writer'],'result':result}
-                                    schedule_for_all_client_dict[k,q]=item
+                                    result[f'{k}_dcp_{i}'] = {'url':url_list,'model_ver':i,'data_ver':j,'batch':h,'prob':y[s, k, i, j, q,h]}
+                                    item[k,q]={'writer':Qt[k][q]['writer'],'result':result}
+                                    schedule_for_all_client_dict[k,q]=item[k,q]
         # print(schedule_for_all_client_dict)
         return schedule_for_all_client_dict
 
