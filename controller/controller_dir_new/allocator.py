@@ -322,24 +322,25 @@ class allocator():
         for s in S:
             port = 8500
             for k in K:
-                for q in range (len (Qt[k])):
-                    re[k,q] = {}
-                    if re[k,q] == {}:
-                        result = {}
+
                 # for s in S:
                 #     port = 8500
-                    for i in range (I):
-                        for h in self.adaptive_H(self.device_type,k,i):
-                            url_list = []
-                            if float(x[s,k,i,h])!= 0:
-                          # url_list = [self.url_generator (s,8501,'mobile',i)]
-                                url_list = [self.url_generator (s,port+x,k,i)for x in range(int(x[s,k,i,h])) ]
-                                port += x[s,k,i,h]
-                            for j in range (self.J):
+                for i in range (I):
+                    for h in self.adaptive_H(self.device_type,k,i):
+                        url_list = []
+                        if float(x[s,k,i,h])!= 0:
+                      # url_list = [self.url_generator (s,8501,'mobile',i)]
+                            url_list = [self.url_generator (s,port+x,k,i)for x in range(int(x[s,k,i,h])) ]
+                            port += x[s,k,i,h]
+                        for j in range (self.J):
+                            for q in range (len (Qt[k])):
+                                re[k, q] = {}
+                                if re[k, q] == {}:
+                                    result = {}
                                 if float(y[s, k, i, j, q,h]) >0:
                                     result[f'{k}_dcp_{i}'] = {'url':url_list,'model_ver':i,'data_ver':j,'batch':h,'prob':y[s, k, i, j, q,h]}
-                                    re[k,q] = result
-                                    item[k,q]={'writer':Qt[k][q]['writer'],'result':re[k,q]}
+                                    # re[k,q] = result
+                                    item[k,q]={'writer':Qt[k][q]['writer'],'result':result}
                                     schedule_for_all_client_dict[k,q]=item[k,q]
         # print(schedule_for_all_client_dict)
         return schedule_for_all_client_dict
