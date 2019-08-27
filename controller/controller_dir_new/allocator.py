@@ -315,7 +315,7 @@ class allocator():
         item ={}
         result ={}
         url_list =[]
-        # re = {}
+        re = {}
         kk = ''
         qq= 0
         ss = ''
@@ -338,7 +338,7 @@ class allocator():
                             if q != qq and k != kk:
                                 qq = q
                                 kk = k
-                                result = {}
+                                re[k, q] = {}
                             for j in range (self.J):
                                 # re[k, q] = {}
                                 # if re[k, q] == {}:
