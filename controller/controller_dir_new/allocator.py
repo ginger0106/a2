@@ -355,7 +355,7 @@ class allocator():
                                                                   'batch': h, 'prob': y[s, k, i, j, q, h]}
                                         # re[k,q] = resultt
                                         for key,items in resultt.items():
-                                            if (k, q) in key[:2]:
+                                            if (k,q) in [key[:2]]:
                                                 name = key[2]
                                                 re[name] = items
                                              # = {list (resultt.keys ())[0][:2]: resultt[k, q, f'{k}_dcp_{i}'] for jj in
