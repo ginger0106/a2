@@ -320,9 +320,9 @@ class allocator():
         #     port = 8500
         for k in K:
             for q in range (len (Qt[k])):
+                result = {}
                 for s in S:
                     port = 8500
-                    result = {}
                     for i in range (I):
                         for h in self.adaptive_H(self.device_type,k,i):
                             url_list = []
