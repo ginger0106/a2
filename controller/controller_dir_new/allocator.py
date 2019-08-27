@@ -336,10 +336,10 @@ class allocator():
                             port += x[s,k,i,h]
                         for q in range (len (Qt[k])):
                             # re[k, q] = {}
-                            if q != qq:
-                                qq = q
-                                kk = k
-                                resultt = {}
+                            # if q != qq:
+                            #     qq = q
+                            #     kk = k
+                            #     re[k, q] = {}
 
                             for j in range (self.J):
                                 # re[k, q] = {}
@@ -351,10 +351,13 @@ class allocator():
                                         item[k,q]={'writer':Qt[k][q]['writer'],'result':result}
                                         schedule_for_all_client_dict[k, q] = item[k, q]
                                     else:
-                                        resultt[f'{k}_dcp_{i}'] = {'url': url_list, 'model_ver': i, 'data_ver': j,
+                                        resultt[k,q,f'{k}_dcp_{i}'] = {'url': url_list, 'model_ver': i, 'data_ver': j,
                                                                   'batch': h, 'prob': y[s, k, i, j, q, h]}
-                                        re[k,q] = resultt
-                                        item[k,q]={'writer':Qt[k][q]['writer'],'result':re[k,q]}
+                                        # re[k,q] = resultt
+                                        re = {jj:resultt[k,q,f'{k}_dcp_{i}'] for jj in list(resultt.keys())[0][2]}
+                                        # re[k,q][f'{k}_dcp_{i}'] = {'url': url_list, 'model_ver': i, 'data_ver': j,
+                                        #                           'batch': h, 'prob': y[s, k, i, j, q, h]}
+                                        item[k,q]={'writer':Qt[k][q]['writer'],'result':re}
 
                                     # result[f'{k}_dcp_{i}'] = {'url':url_list,'model_ver':i,'data_ver':j,'batch':h,'prob':y[s, k, i, j, q,h]}
                                     # re[k,q] = result
