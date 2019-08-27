@@ -68,7 +68,7 @@ class IperfClient():
         await asyncio.sleep(self.interval_time)
         with open('./bw.txt','w+') as f:
             for server_num in range(self.server_len):
-                # print(self.avg_bw_dict)
+                print(self.avg_bw_dict)
                 f.write(self.avg_bw_dict[server_num]+'\n')
 
     def write_bw_time(self,item):
