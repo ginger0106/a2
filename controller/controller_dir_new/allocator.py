@@ -333,13 +333,12 @@ class allocator():
                       # url_list = [self.url_generator (s,8501,'mobile',i)]
                             url_list = [self.url_generator (s,port+x,k,i)for x in range(int(x[s,k,i,h])) ]
                             port += x[s,k,i,h]
-                        for j in range (self.J):
-                            for q in range (len (Qt[k])):
-                                if q != qq or k != kk:
-                                    qq = q
-                                    kk = k
-                                    result = {}
-
+                        for q in range (len (Qt[k])):
+                            if q != qq and k != kk:
+                                qq = q
+                                kk = k
+                                result = {}
+                            for j in range (self.J):
                                 # re[k, q] = {}
                                 # if re[k, q] == {}:
                                 #     result = {}
