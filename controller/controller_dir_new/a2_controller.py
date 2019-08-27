@@ -153,12 +153,12 @@ class a2_controller():
     def get_server_path(self):
         if self.debug =='test':
             return server_info_path_test
-        elif self.debug =='aws':
-            return gpu_info_path_aws
-        # elif self.debug =='aws' and self.device_type =='gpu':
+        # elif self.debug =='aws':
         #     return gpu_info_path_aws
-        # elif self.debug =='aws' and self.device_type =='cpu':
-        #     return cpu_info_path_aws
+        elif self.debug =='aws' and self.device_type =='gpu':
+            return gpu_info_path_aws
+        elif self.debug =='aws' and self.device_type =='cpu':
+            return cpu_info_path_aws
         elif self.debug == 'aws_test':
             return gpu_info_path_aws_test
 
