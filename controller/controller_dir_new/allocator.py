@@ -355,7 +355,7 @@ class allocator():
                                     resultt[k,q,f'{k}_dcp_{i}'] = {'url': url_list, 'model_ver': i, 'data_ver': j,
                                                               'batch': h, 'prob': y[s, k, i, j, q, h]}
                                     # re[k,q] = resultt
-                                    re.update({(k,q):{f'{k}_dcp_{i}':resultt[q,f'{k}_dcp_{i}']}})
+                                    re.update({(k,q):{f'{k}_dcp_{i}':resultt[k,q,f'{k}_dcp_{i}']}})
                                     # for key,items in resultt.items():
                                     #
                                     #     if (k,q) in [key[:2]]:
