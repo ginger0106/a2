@@ -321,6 +321,9 @@ class allocator():
         qq= -1
         resultt= {}
         ss = ''
+        for k in K:
+            for q in range (len (Qt[k])):
+                re[k,q] = {}
         for s in S:
             port = 8500
             for k in K:
