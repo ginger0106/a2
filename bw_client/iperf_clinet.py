@@ -4,6 +4,7 @@ from collections import deque
 import json
 import argparse
 import json
+import os
 from shlex import quote
 
 # server_list = [('127.0.0.1',1234),('127.0.0.1',1234)
@@ -20,6 +21,9 @@ class IperfClient():
         self.time = 0
         self.count =0
         self.path = path
+        if os.path.exists('.bw_time.txt'):
+            os.remove('./bw_time.txt')
+
 
     async def run_iperf_all_servers(self):
         with open(self.path) as f:
@@ -77,6 +81,7 @@ class IperfClient():
 
     def write_bw_time(self,item):
         # await asyncio.sleep(self.time_slot)
+
         with open('./bw_time.txt','a+') as f:
             json.dump(item,f)
             # for server_num in range(self.server_len):

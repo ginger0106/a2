@@ -7,7 +7,7 @@ from .server_cls import server_cls
 # logging.basicConfig(level= logging.DEBUG)
 logging.basicConfig(level=logging.DEBUG,#控制台打印的日志级别
                     filename='controller.log',
-                    filemode='a',##模式，有w和a，w就是写模式，每次都会重新写日志，覆盖之前的日志
+                    filemode='w',##模式，有w和a，w就是写模式，每次都会重新写日志，覆盖之前的日志
                     #a是追加模式，默认如果不写的话，就是追加模式
                     format=
                     '%(asctime)s - %(pathname)s[line:%(lineno)d] - %(levelname)s: %(message)s'
@@ -57,7 +57,7 @@ class a2_controller():
         while True:
             send_list = []
             for j in range(len(self.server_dict.keys())):
-                print(self.server_dict.keys())
+                # print(self.server_dict.keys())
                # log = f'INFO:[SETP4][SOCKET] GET msg {[j]} from Servers!'
                # self.save_log (log)
                 await self.server_msg_que.get()

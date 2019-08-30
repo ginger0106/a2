@@ -154,7 +154,6 @@ class allocator():
         x = self.var_x(m,K,I,S)
         y = self.var_y(m,K,I,S,Qt)
         continuous_x,continuous_y,_ = self.optimation_solver(m,K,I,S,Qt,x,y,0)
-
         if self.version_stg =='heu':
             integer_x = self.heuristic_rounding(K,I,S,continuous_x)
         else:
@@ -324,63 +323,132 @@ class allocator():
         for k in K:
             for q in range (len (Qt[k])):
                 re[k,q] = {}
+
+        url_dict = {}
         for s in S:
             port = 8500
             for k in K:
-
-
-                # for s in S:
-                #     port = 8500
                 for i in range (I):
-                    for h in self.adaptive_H(self.device_type,k,i):
+                    for h in self.adaptive_H (self.device_type, k, i):
                         url_list = []
-                        if float(x[s,k,i,h])!= 0:
-                      # url_list = [self.url_generator (s,8501,'mobile',i)]
-                            url_list = [self.url_generator (s,port+x,k,i)for x in range(int(x[s,k,i,h])) ]
-                            port += x[s,k,i,h]
-                        for q in range (len (Qt[k])):
-                            # re[k, q] = {}
-                            # if q != qq:
-                            #     qq = q
-                            #     kk = k
-                            #     re[k, q] = {}
-
+                        if float (x[s, k, i, h]) != 0:
+                            url_list = [self.url_generator (s, port + x, k, i) for x in range (int (x[s, k, i, h]))]
+                            url_dict[s, k, i, h] = url_list
+                            port += x[s, k, i, h]
+        for k in K:
+            for q in range (len (Qt[k])):
+                result = {}
+                for s in S:
+                    for i in range (I):
+                        for h in self.adaptive_H (self.device_type, k, i):
                             for j in range (self.J):
-                                # re[k, q] = {}
-                                # if re[k, q] == {}:
-                                #     result = {}
-                                if float(y[s, k, i, j, q,h]) >0:
-                                    # if y[s, k, i, j, q,h] ==1.0:
-                                    #     result = {f'{k}_dcp_{i}':{'url':url_list,'model_ver':i,'data_ver':j,'batch':h,'prob':y[s, k, i, j, q,h]}}
-                                    #     item[k,q]={'writer':Qt[k][q]['writer'],'result':result}
-                                    #     schedule_for_all_client_dict[k, q] = item[k, q]
-                                    # else:
-                                    resultt[k,q,f'{k}_dcp_{i}'] = {'url': url_list, 'model_ver': i, 'data_ver': j,
-                                                              'batch': h, 'prob': y[s, k, i, j, q, h]}
+                                if float (y[s, k, i, j, q, h]) > 0.0:
+                                    result[f'{k}{i}{j}{q}{h}{s}'] = {'url': url_dict[s, k, i, h], 'model_ver': i, 'data_ver': j,
+                                                                      'batch': h, 'prob': y[s, k, i, j, q, h]}
+                                    # print(k,q,result)
+                                    item[k, q] = {'writer': Qt[k][q]['writer'], 'result': result}
+                                    schedule_for_all_client_dict[k, q] = item[k, q]
 
-                                    re[k,q].update({f'{k}_dcp_{i}':resultt[k,q,f'{k}_dcp_{i}']})
-                                    # for key,items in resultt.items():
-                                    #
-                                    #     if (k,q) in [key[:2]]:
-                                    #         name = key[2]
-                                    #         # ree = {re[name]:items}
-                                    #         re[name] = items
-                                    #         ree[k,q] = re
-                                    #      # = {list (resultt.keys ())[0][:2]: resultt[k, q, f'{k}_dcp_{i}'] for jj in
-                                    #      #      list (resultt.keys ())[0][:2]}
+        # for k in K:
+        #     for q in range (len (Qt[k])):
+        #         sum = 0
+        #         for s in S:
+        #             for i in range (I):
+        #                 for h in self.adaptive_H (self.device_type, k, i):
+        #                     for j in range (self.J):
+        #                         if float (y[s, k, i, j, q, h]) > 0.0:
+        #                             sum += schedule_for_all_client_dict[k, q]['result'][s, k, i, j, q, h]['prob']
+        #         print('2222222222222222',sum)
 
-                                    # re[k,q][f'{k}_dcp_{i}'] = {'url': url_list, 'model_ver': i, 'data_ver': j,
-
-                                    # re = {list(resultt.keys())[0][:2]:resultt[k,q,f'{k}_dcp_{i}'] for jj in list(resultt.keys())[0][:2]}
-                                    # re[k,q][f'{k}_dcp_{i}'] = {'url': url_list, 'model_ver': i, 'data_ver': j,
-                                    #                           'batch': h, 'prob': y[s, k
-                                    item[k,q]={'writer':Qt[k][q]['writer'],'result':re[k,q]}
-
-                                    # result[f'{k}_dcp_{i}'] = {'url':url_list,'model_ver':i,'data_ver':j,'batch':h,'prob':y[s, k, i, j, q,h]}
-                                    # re[k,q] = result
-                                    # item[k,q]={'writer':Qt[k][q]['writer'],'result':re[k,q]}
-                                    schedule_for_all_client_dict[k,q]=item[k,q]
+        #
+        #
+        # for s in S:
+        #     for k in K:
+        #         for i in range (I):
+        #             for h in self.adaptive_H(self.device_type,k,i):
+        #                 if float(x[s,k,i,h])!= 0:
+        #                 for q in range (len (Qt[k])):
+        #                     for j in range (self.J):
+        #                         if float(y[s, k, i, j, q,h]) >0:
+        #                             # if y[s, k, i, j, q,h] ==1.0:
+        #                             #     result = {f'{k}_dcp_{i}':{'url':url_list,'model_ver':i,'data_ver':j,'batch':h,'prob':y[s, k, i, j, q,h]}}
+        #                             #     item[k,q]={'writer':Qt[k][q]['writer'],'result':result}
+        #                             #     schedule_for_all_client_dict[k, q] = item[k, q]
+        #                             # else:
+        #                             resultt[k,q,f'{k}_dcp_{i}'] = {'url': url_list, 'model_ver': i, 'data_ver': j,
+        #                                                       'batch': h, 'prob': y[s, k, i, j, q, h]}
+        #
+        #                             re[k,q].update({f'{k}_dcp_{i}':resultt[k,q,f'{k}_dcp_{i}']})
+        #                             # print(re)
+        #                             # for key,items in resultt.items():
+        #                             #
+        #                             #     if (k,q) in [key[:2]]:
+        #                             #         name = key[2]
+        #                             #         # ree = {re[name]:items}
+        #                             #         re[name] = items
+        #                             #         ree[k,q] = re
+        #                             #      # = {list (resultt.keys ())[0][:2]: resultt[k, q, f'{k}_dcp_{i}'] for jj in
+        #                             #      #      list (resultt.keys ())[0][:2]}
+        #
+        #                             # re[k,q][f'{k}_dcp_{i}'] = {'url': url_list, 'model_ver': i, 'data_ver': j,
+        #
+        #                             # re = {list(resultt.keys())[0][:2]:resultt[k,q,f'{k}_dcp_{i}'] for jj in list(resultt.keys())[0][:2]}
+        #                             # re[k,q][f'{k}_dcp_{i}'] = {'url': url_list, 'model_ver': i, 'data_ver': j,
+        #                             #                           'batch': h, 'prob': y[s, k
+        #                             item[k,q]={'writer':Qt[k][q]['writer'],'result':re[k,q]}
+        #
+        #                             # result[f'{k}_dcp_{i}'] = {'url':url_list,'model_ver':i,'data_ver':j,'batch':h,'prob':y[s, k, i, j, q,h]}
+        #                             # re[k,q] = result
+        #                             # item[k,q]={'writer':Qt[k][q]['writer'],'result':re[k,q]}
+        #                             schedule_for_all_client_dict[k,q]=item[k,q]
+        #
+        #
+        # for s in S:
+        #     port = 8500
+        #     for k in K:
+        #         for i in range (I):
+        #             for h in self.adaptive_H(self.device_type,k,i):
+        #                 url_list = []
+        #                 if float(x[s,k,i,h])!= 0:
+        #                     url_list = [self.url_generator (s,port+x,k,i)for x in range(int(x[s,k,i,h])) ]
+        #                     port += x[s,k,i,h]
+        #                 for q in range (len (Qt[k])):
+        #                     for j in range (self.J):
+        #                         if float(y[s, k, i, j, q,h]) >0:
+        #                             # if y[s, k, i, j, q,h] ==1.0:
+        #                             #     result = {f'{k}_dcp_{i}':{'url':url_list,'model_ver':i,'data_ver':j,'batch':h,'prob':y[s, k, i, j, q,h]}}
+        #                             #     item[k,q]={'writer':Qt[k][q]['writer'],'result':result}
+        #                             #     schedule_for_all_client_dict[k, q] = item[k, q]
+        #                             # else:
+        #                             resultt[k,q,f'{k}_dcp_{i}'] = {'url': url_list, 'model_ver': i, 'data_ver': j,
+        #                                                       'batch': h, 'prob': y[s, k, i, j, q, h]}
+        #
+        #                             re[k,q].update({f'{k}_dcp_{i}':resultt[k,q,f'{k}_dcp_{i}']})
+        #                             # print(re)
+        #                             # for key,items in resultt.items():
+        #                             #
+        #                             #     if (k,q) in [key[:2]]:
+        #                             #         name = key[2]
+        #                             #         # ree = {re[name]:items}
+        #                             #         re[name] = items
+        #                             #         ree[k,q] = re
+        #                             #      # = {list (resultt.keys ())[0][:2]: resultt[k, q, f'{k}_dcp_{i}'] for jj in
+        #                             #      #      list (resultt.keys ())[0][:2]}
+        #
+        #                             # re[k,q][f'{k}_dcp_{i}'] = {'url': url_list, 'model_ver': i, 'data_ver': j,
+        #
+        #                             # re = {list(resultt.keys())[0][:2]:resultt[k,q,f'{k}_dcp_{i}'] for jj in list(resultt.keys())[0][:2]}
+        #                             # re[k,q][f'{k}_dcp_{i}'] = {'url': url_list, 'model_ver': i, 'data_ver': j,
+        #                             #                           'batch': h, 'prob': y[s, k
+        #                             item[k,q]={'writer':Qt[k][q]['writer'],'result':re[k,q]}
+        #
+        #                             # result[f'{k}_dcp_{i}'] = {'url':url_list,'model_ver':i,'data_ver':j,'batch':h,'prob':y[s, k, i, j, q,h]}
+        #                             # re[k,q] = result
+        #                             # item[k,q]={'writer':Qt[k][q]['writer'],'result':re[k,q]}
+        #                             schedule_for_all_client_dict[k,q]=item[k,q]
         # print(schedule_for_all_client_dict)
+        print(schedule_for_all_client_dict)
+        # exit()
         return schedule_for_all_client_dict
 
     def url_generator(self,server_addr,port,model_name,model_ver):

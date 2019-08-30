@@ -51,7 +51,7 @@ class model_vm():
             for vm in f.readlines():
                 #print(vm)
                 vm = vm.split(' ')
-                print(vm)
+                # print(vm)
                 self.dns_dict[num] = {'server_addr':vm[0],'worker_addr':vm[1],'hw':vm[2]}
                 num+=1
         return self.dns_dict
