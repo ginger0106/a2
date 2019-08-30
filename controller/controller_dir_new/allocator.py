@@ -447,7 +447,7 @@ class allocator():
         #                             # item[k,q]={'writer':Qt[k][q]['writer'],'result':re[k,q]}
         #                             schedule_for_all_client_dict[k,q]=item[k,q]
         # print(schedule_for_all_client_dict)
-        print(schedule_for_all_client_dict)
+        # print(schedule_for_all_client_dict)
         # exit()
         return schedule_for_all_client_dict
 
