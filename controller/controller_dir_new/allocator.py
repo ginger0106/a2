@@ -131,8 +131,7 @@ class allocator():
     def process_and_save_data(self,cost,x,y):
         avg_latency,avg_bw,avg_acc = [],[],[]
         num=0
-        if self.inter>=2:
-            exit()
+
         for client_dict in self.history_list:
             client_dict.pop('writer')
             for _,request in client_dict['requests'].items():
@@ -149,6 +148,10 @@ class allocator():
         output = open(f'controller_dir_new/results/result_{self.version_stg}_{self.device_type}_{self.time_slot}.pkl','wb')
         pickle.dump(re,output)
         self.inter+=1
+        if self.inter ==2:
+            exit()
+
+
 
     def gurobi(self,K,I,S,Qt):
         log = '----------------------------------GUROBI----------------------------------'
