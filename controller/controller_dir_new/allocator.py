@@ -44,6 +44,7 @@ class allocator():
         self.I,self.J = self.adaptive_version()
         self.x = {}
         self.y = {}
+        self.inter = 0
         # self.H = self.adaptive_H(device_type)
     
     def adaptive_version(self):
@@ -124,13 +125,14 @@ class allocator():
         # print('got msg from all clients')
         allocation_for_all_server_dict, schedule_for_all_client_dict,cost = self.gurobi(self.K,self.I,self.S,self.get_Qt())
         # print(schedule_for_all_client_dict)
-        self.process_and_save_data(cost,allocation_for_all_server_dict,schedule_for_all_client_dict)
         return schedule_for_all_client_dict,allocation_for_all_server_dict
 
 
-    def process_and_save_data(self,cost,allocation_for_all_server_dict,schedule_for_all_client_dict):
+    def process_and_save_data(self,cost,x,y):
         avg_latency,avg_bw,avg_acc = [],[],[]
         num=0
+        if self.inter>=2:
+            exit()
         for client_dict in self.history_list:
             client_dict.pop('writer')
             for _,request in client_dict['requests'].items():
@@ -143,9 +145,10 @@ class allocator():
         avg_latency = np.average (avg_latency)
         avg_bw = np.average (avg_bw)
         avg_acc = np.average (avg_acc)
-        re = {'avg_latency':avg_latency,'avg_bw':avg_bw,'avg_acc':avg_acc,'history':self.history_list,'cost':cost,"x":self.x,"y":self.y}
+        re = {'avg_latency':avg_latency,'avg_bw':avg_bw,'avg_acc':avg_acc,'history':self.history_list,'cost':cost,'x':x,'y':y}
         output = open(f'controller_dir_new/results/result_{self.version_stg}_{self.device_type}_{self.time_slot}.pkl','wb')
         pickle.dump(re,output)
+        self.inter+=1
 
     def gurobi(self,K,I,S,Qt):
         log = '----------------------------------GUROBI----------------------------------'
@@ -159,11 +162,13 @@ class allocator():
         else:
             integer_x = self.RA_rounding(continuous_x,continuous_y,K,I,S,Qt)
         _,new_y,cost= self.optimation_solver(m,K,I,S,Qt,integer_x,self.var_y(m,K,I,S,Qt),1)
+        self.process_and_save_data(cost,integer_x,new_y)
+
         allocation_for_all_server_dict = self.process_gurobi_result_x(K,I,S,integer_x)
         # print(8888888888888,allocation_for_all_server_dict)
 
         schedule_for_all_client_dict = self.process_gurobi_result_y(K,I,S,Qt,integer_x,new_y)
-        self.x, self.y = integer_x,new_y
+        # self.x, self.y = integer_x,new_y
         return allocation_for_all_server_dict, schedule_for_all_client_dict,cost
 
     def optimation_solver(self,m,K,I,S,Qt,x,y,flg):
