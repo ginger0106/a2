@@ -144,7 +144,10 @@ class allocator():
         avg_latency = np.average (avg_latency)
         avg_bw = np.average (avg_bw)
         avg_acc = np.average (avg_acc)
-        re = {'avg_latency':avg_latency,'avg_bw':avg_bw,'avg_acc':avg_acc,'history':self.history_list,'cost':cost,'x':x,'y':y}
+        xx = {str(key):val for key,val in x.items()}
+        yy = {str(key):val for key,val in y.items()}
+
+        re = {'avg_latency':avg_latency,'avg_bw':avg_bw,'avg_acc':avg_acc,'history':self.history_list,'cost':cost,'x':xx,'y':yy}
         output = open(f'controller_dir_new/results/result_{self.version_stg}_{self.device_type}_{self.time_slot}.pkl','wb')
         pickle.dump(re,output)
         self.inter+=1
