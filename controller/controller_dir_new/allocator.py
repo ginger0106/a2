@@ -123,7 +123,7 @@ class allocator():
     def controller_engine(self,history_list):
         self.history_list= history_list
         # print('got msg from all clients')
-        allocation_for_all_server_dict, schedule_for_all_client_dict,cost,opt_cost = self.gurobi(self.K,self.I,self.S,self.get_Qt())
+        allocation_for_all_server_dict, schedule_for_all_client_dict,cost = self.gurobi(self.K,self.I,self.S,self.get_Qt())
         # print(schedule_for_all_client_dict)
         return schedule_for_all_client_dict,allocation_for_all_server_dict
 
@@ -178,7 +178,7 @@ class allocator():
 
         schedule_for_all_client_dict = self.process_gurobi_result_y(K,I,S,Qt,integer_x,new_y)
         # self.x, self.y = integer_x,new_y
-        return allocation_for_all_server_dict, schedule_for_all_client_dict,cost,cost_opt
+        return allocation_for_all_server_dict, schedule_for_all_client_dict,cost
 
     def heu_cost(self,K,I,S,continuous_x,Qt,m):
         integer_x = self.heuristic_rounding(K, I, S, continuous_x)
@@ -231,13 +231,14 @@ class allocator():
         log = '----------------------------------GUROBI----------------------------------'
         print(log)
         # print(o,1111111111)
-        c = self.get_cost(K,I,S,x,y)
         if flg==0:
             # print(x)
             y = m.getAttr ('x', y_skijqh)
             x = m.getAttr ('x',x_skih)
+            c = self.get_cost (K, I, S, x, y)
             return x,y,c
         else:
+            c = self.get_cost (K, I, S, x, y)
             return 0,m.getAttr ('x', y_skijqh),c
 
     def var_x(self,m,K,I,S):
