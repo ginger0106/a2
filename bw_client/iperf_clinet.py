@@ -69,7 +69,7 @@ class IperfClient():
         sum_bw = 0
         for i in self.bw_deque:
             item = {addr:{'bw':i,'time':self.get_time()}}
-            self.write_bw_time(item)
+            self.write_bw_time(item,addr)
             sum_bw += i
         self.avg_bw = sum_bw/len(self.bw_deque)
 
@@ -80,10 +80,10 @@ class IperfClient():
                 print(self.avg_bw_dict)
                 f.write(self.avg_bw_dict[server_num]+'\n')
 
-    def write_bw_time(self,item):
+    def write_bw_time(self,item,addr):
         # await asyncio.sleep(self.time_slot)
 
-        with open('./bw_time.txt','a+') as f:
+        with open(f'./{addr}_bw_time.txt','a+') as f:
             json.dump(item,f)
             # for server_num in range(self.server_len):
             #     # print(self.avg_bw_dict)
