@@ -138,7 +138,7 @@ class allocator():
         m = Model ('PLACEMENT')
         x = self.var_x(m,K,I,S)
         y = self.var_y(m,K,I,S,Qt) 
-        print(Qt)
+        # print(Qt)
         continuous_x,continuous_y,_ = self.optimation_solver(m,K,I,S,Qt,x,y,0)
         if self.version_stg =='heu':
             integer_x = self.heuristic_rounding(K,I,S,continuous_x)
