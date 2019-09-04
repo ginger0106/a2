@@ -5,6 +5,7 @@ import json
 import argparse
 import json
 import os
+import time
 from shlex import quote
 
 # server_list = [('127.0.0.1',1234),('127.0.0.1',1234)
@@ -67,7 +68,7 @@ class IperfClient():
     def pop_bw(self,addr):
         sum_bw = 0
         for i in self.bw_deque:
-            item = {addr:{'bw':i,'time':self.time}}
+            item = {addr:{'bw':i,'time':self.get_time()}}
             self.write_bw_time(item)
             sum_bw += i
         self.avg_bw = sum_bw/len(self.bw_deque)
@@ -87,6 +88,10 @@ class IperfClient():
             # for server_num in range(self.server_len):
             #     # print(self.avg_bw_dict)
             #     f.write(item+'\n')
+
+    def get_time(self):
+        t = time.localtime(time.time())
+        return "%s:%s:%s" % (t.tm_hour, t.tm_min, t.tm_sec)
 
 
 parser = argparse.ArgumentParser()

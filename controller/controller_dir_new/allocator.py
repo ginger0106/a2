@@ -123,12 +123,12 @@ class allocator():
     def controller_engine(self,history_list):
         self.history_list= history_list
         # print('got msg from all clients')
-        allocation_for_all_server_dict, schedule_for_all_client_dict,cost = self.gurobi(self.K,self.I,self.S,self.get_Qt())
+        allocation_for_all_server_dict, schedule_for_all_client_dict,cost,opt_cost = self.gurobi(self.K,self.I,self.S,self.get_Qt())
         # print(schedule_for_all_client_dict)
         return schedule_for_all_client_dict,allocation_for_all_server_dict
 
 
-    def process_and_save_data(self,cost,x,y):
+    def process_and_save_data(self,cost,x,y,cost_opt,cost_heu):
         avg_latency,avg_bw,avg_acc = [],[],[]
         num=0
 
@@ -147,7 +147,7 @@ class allocator():
         xx = {str(key):val for key,val in x.items()}
         yy = {str(key):val for key,val in y.items()}
 
-        re = {'avg_latency':avg_latency,'avg_bw':avg_bw,'avg_acc':avg_acc,'history':self.history_list,'cost':cost,'x':xx,'y':yy}
+        re = {'avg_latency':avg_latency,'avg_bw':avg_bw,'avg_acc':avg_acc,'history':self.history_list,'cost':cost,'cost_opt':cost_opt,'cost_heu':cost_heu,'x':xx,'y':yy}
         output = open(f'controller_dir_new/results/result_{self.version_stg}_{self.device_type}_{self.time_slot}.pkl','wb')
         pickle.dump(re,output)
         self.inter+=1
@@ -162,20 +162,32 @@ class allocator():
         m = Model ('PLACEMENT')
         x = self.var_x(m,K,I,S)
         y = self.var_y(m,K,I,S,Qt)
-        continuous_x,continuous_y,_ = self.optimation_solver(m,K,I,S,Qt,x,y,0)
+        continuous_x,continuous_y,cost_opt = self.optimation_solver(m,K,I,S,Qt,x,y,0)
         if self.version_stg =='heu':
             integer_x = self.heuristic_rounding(K,I,S,continuous_x)
         else:
             integer_x = self.RA_rounding(continuous_x,continuous_y,K,I,S,Qt)
+
+
         _,new_y,cost= self.optimation_solver(m,K,I,S,Qt,integer_x,self.var_y(m,K,I,S,Qt),1)
-        self.process_and_save_data(cost,integer_x,new_y)
+        cost_heu = self.heu_cost(K,I,S,continuous_x,Qt,m)
+        self.process_and_save_data(cost,integer_x,new_y,cost_opt,cost_heu)
 
         allocation_for_all_server_dict = self.process_gurobi_result_x(K,I,S,integer_x)
         # print(8888888888888,allocation_for_all_server_dict)
 
         schedule_for_all_client_dict = self.process_gurobi_result_y(K,I,S,Qt,integer_x,new_y)
         # self.x, self.y = integer_x,new_y
-        return allocation_for_all_server_dict, schedule_for_all_client_dict,cost
+        return allocation_for_all_server_dict, schedule_for_all_client_dict,cost,cost_opt
+
+    def heu_cost(self,K,I,S,continuous_x,Qt,m):
+        integer_x = self.heuristic_rounding(K, I, S, continuous_x)
+        _,new_y,cost_heu= self.optimation_solver(m,K,I,S,Qt,integer_x,self.var_y(m,K,I,S,Qt),1)
+        return cost_heu
+
+
+
+
 
     def optimation_solver(self,m,K,I,S,Qt,x,y,flg):
         # m = Model ('PLACEMENT')
@@ -609,7 +621,7 @@ class allocator():
                         # print (99,self.compute_z_in_s(s_hat,Qt,k, i,h,z_skijqh,j),self.compute_z_in_s(s,Qt,k, i,h,z_skijqh,j),np.ceil(x[s, k, i, h]), np.floor (x[s, k, i, h]), k)
 
                         if self.compute_z_in_s (s, Qt, k, i, h, z_skijqh, j) > np.floor(x_cp[s, k, i, h]):
-                            # print (99, self.compute_z_in_s (s, Qt, k, i, h, z_skijqh, j), np.floor (x_cp[s, k, i, h]), s, k, i,h, x_cp[s, k, i, h])
+                            print (99, self.compute_z_in_s (s, Qt, k, i, h, z_skijqh, j), np.floor (x_cp[s, k, i, h]), s, k, i,h, x_cp[s, k, i, h])
 
                             z_skijqh[s, k, i, j, q, h], z_skijqh[s_hat, k, i, j, q, h] = self.change_z_core(z_skijqh[s, k, i, j, q, h],z_skijqh[s_hat, k, i, j, q, h])
                             # break
