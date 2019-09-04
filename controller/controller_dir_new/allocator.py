@@ -86,7 +86,7 @@ class allocator():
                         # print(222,server_addr,[val['addr'] for val in self.server_dict.values()])
                         est_latency_for_request = len(client_dict['requests'])*IMG_SIZE[data_ver]/client_dict['bw'][server_addr]\
                                                    +self.model_vm_cls.timeout_ki[client_dict['model_name'],model_ver]/1000\
-                                                   +self.model_vm_cls.t_kih[client_dict['model_name'],model_ver,h]
+                                                   +self.model_vm_cls.t_kih[client_dict['model_name'],model_ver,h] #
                         # print(len(client_dict['requests'])*IMG_SIZE[data_ver])
                         est_acc_for_request = self.acc_dict[client_dict['model_name']][model_ver][data_ver]
                         if client_dict['acc_limit']<=est_acc_for_request and \
@@ -138,7 +138,7 @@ class allocator():
                 num+=1
                 avg_latency.append(request['real_latency'])
 
-                avg_bw.append(request['data_ver']*IMG_SIZE[request['data_ver']])
+                avg_bw.append(IMG_SIZE[request['data_ver']])
                 avg_acc.append(self.acc_dict[client_dict['model_name']][request['model_ver']][request['data_ver']])
 
         avg_latency = np.average (avg_latency)
