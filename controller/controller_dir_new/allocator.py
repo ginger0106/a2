@@ -91,7 +91,7 @@ class allocator():
                         # print(len(client_dict['requests'])*IMG_SIZE[data_ver])
                         est_acc_for_request = self.acc_dict[client_dict['model_name']][model_ver][data_ver]
                         if client_dict['acc_limit']<=est_acc_for_request and \
-                            client_dict['latency_limit']>=est_latency_for_request*1.3 :
+                            client_dict['latency_limit']>=est_latency_for_request*1.15 :
                             avai_data_ver_set.append(data_ver)
                             avai_model_ver_set.append(model_ver)
                             avai_server_set.append(server_addr)
