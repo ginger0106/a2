@@ -22,8 +22,8 @@ class IperfClient():
         self.time = 0
         self.count =0
         self.path = path
-        if os.path.exists('.bw_time.txt'):
-            os.remove('./bw_time.txt')
+        if os.path.exists('~a2/bw_client/bw_time.txt'):
+            os.remove('~a2/bw_client/bw_time.txt')
 
 
     async def run_iperf_all_servers(self):
@@ -75,7 +75,7 @@ class IperfClient():
 
     async def write_log(self):
         await asyncio.sleep(self.interval_time)
-        with open('./bw.txt','w+') as f:
+        with open('~a2/bw_client/bw.txt','w+') as f:
             for server_num in range(self.server_len):
                 print(self.avg_bw_dict)
                 f.write(self.avg_bw_dict[server_num]+'\n')
@@ -83,7 +83,7 @@ class IperfClient():
     def write_bw_time(self,item,addr):
         # await asyncio.sleep(self.time_slot)
 
-        with open(f'./{addr}_bw_time.txt','a+') as f:
+        with open(f'~a2/bw_client/bw_time.txt','a+') as f:
             json.dump(item,f)
             # for server_num in range(self.server_len):
             #     # print(self.avg_bw_dict)

@@ -5,6 +5,7 @@ from gurobipy import *
 import pickle
 from math import isnan
 
+
 DELTA_T = 2
 LOCATION_NUM = 3
 CLIENT_NUM = 1
@@ -90,7 +91,7 @@ class allocator():
                         # print(len(client_dict['requests'])*IMG_SIZE[data_ver])
                         est_acc_for_request = self.acc_dict[client_dict['model_name']][model_ver][data_ver]
                         if client_dict['acc_limit']<=est_acc_for_request and \
-                            client_dict['latency_limit']>=est_latency_for_request :
+                            client_dict['latency_limit']>=est_latency_for_request*1.3 :
                             avai_data_ver_set.append(data_ver)
                             avai_model_ver_set.append(model_ver)
                             avai_server_set.append(server_addr)
@@ -316,6 +317,7 @@ class allocator():
         for s in S:
             item = {}
             port = 8500
+
             sum_for_server = 0
             for k in K:
                 for i in range(I):
