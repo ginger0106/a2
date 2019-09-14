@@ -158,6 +158,12 @@ class allocator():
 
 
     def gurobi(self,K,I,S,Qt):
+        last_a2 = 0
+        last_heu = 0
+        last_opt = 0
+        last_x = {}
+        last_y = {}
+
         log = '----------------------------------GUROBI----------------------------------'
         print(log)
         m = Model ('PLACEMENT')
@@ -169,10 +175,21 @@ class allocator():
         else:
             integer_x = self.RA_rounding(continuous_x,continuous_y,K,I,S,Qt)
 
+        try:
+            _,new_y,cost= self.optimation_solver(m,K,I,S,Qt,integer_x,self.var_y(m,K,I,S,Qt),1)
+            cost_heu = self.heu_cost(K,I,S,continuous_x,Qt,m)
+            if self.inter ==0:
+                last_a2 = cost
+                last_heu = cost_heu
+                last_opt = cost_opt
+                last_x = integer_x
+                last_y = new_y
 
-        _,new_y,cost= self.optimation_solver(m,K,I,S,Qt,integer_x,self.var_y(m,K,I,S,Qt),1)
-        cost_heu = self.heu_cost(K,I,S,continuous_x,Qt,m)
-        self.process_and_save_data(cost,integer_x,new_y,cost_opt,cost_heu)
+            self.process_and_save_data(last_a2,last_x,last_y,last_opt,last_heu)
+        except:
+            self.process_and_save_data(last_a2,last_x,last_y,last_opt,last_heu)
+
+
 
         allocation_for_all_server_dict = self.process_gurobi_result_x(K,I,S,integer_x)
         # print(8888888888888,allocation_for_all_server_dict)
