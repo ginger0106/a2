@@ -158,11 +158,11 @@ class allocator():
 
 
     def gurobi(self,K,I,S,Qt):
-        last_a2 = 0
-        last_heu = 0
-        last_opt = 0
-        last_x = {}
-        last_y = {}
+        # last_a2 = 0
+        # last_heu = 0
+        # last_opt = 0
+        # last_x = {}
+        # last_y = {}
 
         log = '----------------------------------GUROBI----------------------------------'
         print(log)
@@ -179,15 +179,15 @@ class allocator():
             _,new_y,cost= self.optimation_solver(m,K,I,S,Qt,integer_x,self.var_y(m,K,I,S,Qt),1)
             cost_heu = self.heu_cost(K,I,S,continuous_x,Qt,m)
             if self.inter ==0:
-                last_a2 = cost
-                last_heu = cost_heu
-                last_opt = cost_opt
-                last_x = integer_x
-                last_y = new_y
+                self.last_a2 = cost
+                self.last_heu = cost_heu
+                self.last_opt = cost_opt
+                self.last_x = integer_x
+                self.last_y = new_y
 
-            self.process_and_save_data(last_a2,last_x,last_y,last_opt,last_heu)
+            self.process_and_save_data(self.last_a2,self.last_x,self.last_y,self.last_opt,self.last_heu)
         except:
-            self.process_and_save_data(last_a2,last_x,last_y,last_opt,last_heu)
+            self.process_and_save_data(self.last_a2,self.last_x,self.last_y,self.last_opt,self.last_heu)
 
 
 
