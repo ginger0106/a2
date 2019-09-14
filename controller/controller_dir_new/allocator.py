@@ -622,12 +622,13 @@ class allocator():
 
                             # break
                         # print (99,self.compute_z_in_s(s_hat,Qt,k, i,h,z_skijqh,j),self.compute_z_in_s(s,Qt,k, i,h,z_skijqh,j),np.ceil(x[s, k, i, h]), np.floor (x[s, k, i, h]), k)
+#################
+                        # if self.compute_z_in_s (s, Qt, k, i, h, z_skijqh, j) > np.floor(x_cp[s, k, i, h]):
+                        #     print (99, self.compute_z_in_s (s, Qt, k, i, h, z_skijqh, j), np.floor (x_cp[s, k, i, h]), s, k, i,h, x_cp[s, k, i, h])
 
-                        if self.compute_z_in_s (s, Qt, k, i, h, z_skijqh, j) > np.floor(x_cp[s, k, i, h]):
-                            print (99, self.compute_z_in_s (s, Qt, k, i, h, z_skijqh, j), np.floor (x_cp[s, k, i, h]), s, k, i,h, x_cp[s, k, i, h])
-
-                            z_skijqh[s, k, i, j, q, h], z_skijqh[s_hat, k, i, j, q, h] = self.change_z_core(z_skijqh[s, k, i, j, q, h],z_skijqh[s_hat, k, i, j, q, h])
-                            # break
+                        z_skijqh[s, k, i, j, q, h], z_skijqh[s_hat, k, i, j, q, h] = self.change_z_core(z_skijqh[s, k, i, j, q, h],z_skijqh[s_hat, k, i, j, q, h])
+##############
+                           # break
                             # return z_skijqh
                         # else:
                         #     print (88, self.compute_z_in_s (s, Qt, k, i, h, z_skijqh, j), (x[s, k, i, h]))
