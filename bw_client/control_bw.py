@@ -15,7 +15,7 @@ def control_bw(bw,path,device):
     addr_lst = read_addr(path)
     bw = bw*8
     for addr in addr_lst:
-        set_cmd = f'tcset {device} --rate {bw}Kbps --network {addr}'
+        set_cmd = f'tcset {device} --rate {bw}Kbps --network {addr} --direction outgoing'
         p = subprocess.Popen(set_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         p.wait()
     print('Done!')
