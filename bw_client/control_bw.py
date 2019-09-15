@@ -9,15 +9,30 @@ parser.add_argument('-d',default='ens5')
 args = parser.parse_args()
 
 def control_bw(bw,path,device):
+    cmd = 'sudo setcap cap_net_admin+ep /sbin/tc'
+    p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    p.wait()
+    print(p.stdout.readlines())
     del_cmd = f'tcdel {device} --all'
     p = subprocess.Popen(del_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     p.wait()
     addr_lst = read_addr(path)
     bw = bw*8
-    for addr in addr_lst:
-        set_cmd = f'tcset {device} --rate {bw}Kbps --network {addr} --direction outgoing'
+    set_cmd = f'tcset {device} --rate {int(bw)}Kbps --network {addr_lst[0]} --direction outgoing '
+    p = subprocess.Popen(set_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    p.wait()
+    set_cmd = f'tcset {device} --rate {int(bw)}Kbps --network {addr_lst[0]} --direction incoming'
+    p = subprocess.Popen(set_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    p.wait()
+    print(p.stdout.readlines())
+    for addr in addr_lst[1:]:
+        set_cmd = f'tcset {device} --rate {int(bw)}Kbps --network {addr} --direction outgoing --add'
         p = subprocess.Popen(set_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         p.wait()
+        set_cmd = f'tcset {device} --rate {int(bw)}Kbps --network {addr} --direction incoming --add'
+        p = subprocess.Popen(set_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        p.wait()
+        print(addr,p.stdout.readlines())
     print('Done!')
 
 def read_addr(path):
