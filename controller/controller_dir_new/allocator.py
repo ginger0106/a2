@@ -165,12 +165,13 @@ class allocator():
                   'cost_opt':cost_opt,'cost_heu':cost_heu,'x':xx,'y':yy,'overhead':overhead,'complete':complete_time}
             output = open(f'controller_dir_new/results/result_{self.version_stg}_{self.device_type}_{self.time_slot}_{self.inter}.pkl','wb')
             pickle.dump(re,output)
-            self.inter+=1
+            # self.inter+=1
+            exit()
 
 
         # else:
             # self.inter ==2:
-            exit()
+            # exit()
 
 
 
