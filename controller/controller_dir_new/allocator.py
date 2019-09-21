@@ -87,13 +87,14 @@ class allocator():
                         # self.model_vm_cls.h_ki[client_dict['model_name'], model_ver]:
                     for server_addr in [val['addr'] for val in self.server_dict.values()]:
                         # print(222,server_addr,[val['addr'] for val in self.server_dict.values()])
-                        est_latency_for_request = len(client_dict['requests'])*IMG_SIZE[data_ver]/client_dict['bw'][server_addr]\
+                        # len(client_dict['requests']) *
+                        est_latency_for_request = IMG_SIZE[data_ver]/client_dict['bw'][server_addr]\
                                                    +self.model_vm_cls.timeout_ki[client_dict['model_name'],model_ver]/1000\
-                                                   +self.model_vm_cls.t_kih[client_dict['model_name'],model_ver,h] #
+                                                   +self.model_vm_cls.t_kih[client_dict['model_name'],model_ver,h]*1.15 #
                         # print(len(client_dict['requests'])*IMG_SIZE[data_ver])
                         est_acc_for_request = self.acc_dict[client_dict['model_name']][model_ver][data_ver]
                         if client_dict['acc_limit']<=est_acc_for_request and \
-                            client_dict['latency_limit']>=est_latency_for_request*1.15 :
+                            client_dict['latency_limit']>=est_latency_for_request :
                             avai_data_ver_set.append(data_ver)
                             avai_model_ver_set.append(model_ver)
                             avai_server_set.append(server_addr)
@@ -133,7 +134,7 @@ class allocator():
 
     def process_and_save_data(self,cost,x,y,cost_opt,cost_heu,overhead):
         avg_latency,avg_bw,avg_acc = [],[],[]
-        # complete_time = 0
+        complete_time = 0
 
         num=0
         if self.inter==0:
