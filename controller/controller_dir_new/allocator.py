@@ -142,6 +142,7 @@ class allocator():
             self.inter+=1
 
         elif self.inter ==1:
+
             self.inter_end_time = timeit.default_timer()
             complete_time = self.inter_end_time -self.inter_end_time
 
@@ -167,7 +168,7 @@ class allocator():
             self.inter+=1
 
 
-        else:
+        # else:
             # self.inter ==2:
             exit()
 
