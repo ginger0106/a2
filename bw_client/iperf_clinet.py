@@ -90,8 +90,9 @@ class IperfClient():
             #     f.write(item+'\n')
 
     def get_time(self):
-        t = time.localtime(time.time())
-        return "%s:%s:%s" % (t.tm_hour, t.tm_min, t.tm_sec)
+        # t = time.localtime(time.time())
+        # return "%s:%s:%s" % (t.tm_hour, t.tm_min, t.tm_sec)
+        return time.time()
 
 
 parser = argparse.ArgumentParser()

@@ -3,6 +3,8 @@ from .server_cls import server_cls
 import numpy as np
 from gurobipy import *
 import pickle
+import time
+import timeit
 from math import isnan
 
 
@@ -129,30 +131,43 @@ class allocator():
         return schedule_for_all_client_dict,allocation_for_all_server_dict
 
 
-    def process_and_save_data(self,cost,x,y,cost_opt,cost_heu):
+    def process_and_save_data(self,cost,x,y,cost_opt,cost_heu,overhead):
         avg_latency,avg_bw,avg_acc = [],[],[]
+        # complete_time = 0
+
         num=0
+        if self.inter==0:
+            self.inter_start_time = timeit.default_timer()
+            self.inter+=1
 
-        for client_dict in self.history_list:
-            client_dict.pop('writer')
-            for _,request in client_dict['requests'].items():
-                num+=1
-                avg_latency.append(request['real_latency'])
+        elif self.inter ==1:
+            self.inter_end_time = timeit.default_timer()
+            complete_time = self.inter_end_time -self.inter_end_time
 
-                avg_bw.append(IMG_SIZE[request['data_ver']])
-                avg_acc.append(self.acc_dict[client_dict['model_name']][request['model_ver']][request['data_ver']])
+            for client_dict in self.history_list:
+                client_dict.pop('writer')
+                for _,request in client_dict['requests'].items():
+                    num+=1
+                    avg_latency.append(request['real_latency'])
 
-        avg_latency = np.average (avg_latency)
-        avg_bw = np.average (avg_bw)
-        avg_acc = np.average (avg_acc)
-        xx = {str(key):val for key,val in x.items()}
-        yy = {str(key):val for key,val in y.items()}
+                    avg_bw.append(IMG_SIZE[request['data_ver']])
+                    avg_acc.append(self.acc_dict[client_dict['model_name']][request['model_ver']][request['data_ver']])
 
-        re = {'avg_latency':avg_latency,'avg_bw':avg_bw,'avg_acc':avg_acc,'history':self.history_list,'cost':cost,'cost_opt':cost_opt,'cost_heu':cost_heu,'x':xx,'y':yy}
-        output = open(f'controller_dir_new/results/result_{self.version_stg}_{self.device_type}_{self.time_slot}.pkl','wb')
-        pickle.dump(re,output)
-        self.inter+=1
-        if self.inter ==2:
+            avg_latency = np.average (avg_latency)
+            avg_bw = np.average (avg_bw)
+            avg_acc = np.average (avg_acc)
+            xx = {str(key):val for key,val in x.items()}
+            yy = {str(key):val for key,val in y.items()}
+
+            re = {'avg_latency':avg_latency,'avg_bw':avg_bw,'avg_acc':avg_acc,'history':self.history_list,'cost':cost,
+                  'cost_opt':cost_opt,'cost_heu':cost_heu,'x':xx,'y':yy,'overhead':overhead,'complete':complete_time}
+            output = open(f'controller_dir_new/results/result_{self.version_stg}_{self.device_type}_{self.time_slot}_{self.inter}.pkl','wb')
+            pickle.dump(re,output)
+            self.inter+=1
+
+
+        else:
+            # self.inter ==2:
             exit()
 
 
@@ -166,6 +181,7 @@ class allocator():
 
         log = '----------------------------------GUROBI----------------------------------'
         print(log)
+        start_time = timeit.default_timer()
         m = Model ('PLACEMENT')
         x = self.var_x(m,K,I,S)
         y = self.var_y(m,K,I,S,Qt)
@@ -177,6 +193,7 @@ class allocator():
 
         try:
             _,new_y,cost= self.optimation_solver(m,K,I,S,Qt,integer_x,self.var_y(m,K,I,S,Qt),1)
+            endtime = timeit.default_timer()
             cost_heu = self.heu_cost(K,I,S,continuous_x,Qt,m)
             if self.inter ==0:
                 self.last_a2 = cost
@@ -184,10 +201,12 @@ class allocator():
                 self.last_opt = cost_opt
                 self.last_x = integer_x
                 self.last_y = new_y
+                self.overhead = endtime-start_time
 
-            self.process_and_save_data(self.last_a2,self.last_x,self.last_y,self.last_opt,self.last_heu)
+            self.process_and_save_data(self.last_a2,self.last_x,self.last_y,self.last_opt,self.last_heu,self.overhead)
         except:
-            self.process_and_save_data(self.last_a2,self.last_x,self.last_y,self.last_opt,self.last_heu)
+            print('Something wrong in gurobi')
+            self.process_and_save_data(self.last_a2,self.last_x,self.last_y,self.last_opt,self.last_heu,self.overhead)
 
 
 
