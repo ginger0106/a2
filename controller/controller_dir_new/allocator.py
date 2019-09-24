@@ -48,6 +48,7 @@ class allocator():
         self.x = {}
         self.y = {}
         self.inter = 0
+        self.complete_time = 0
         # self.H = self.adaptive_H(device_type)
     
     def adaptive_version(self):
@@ -134,7 +135,7 @@ class allocator():
 
     def process_and_save_data(self,cost,x,y,cost_opt,cost_heu,overhead):
         avg_latency,avg_bw,avg_acc = [],[],[]
-        complete_time = 0
+        # complete_time = 0
 
         num=0
         if self.inter==0:
@@ -144,7 +145,7 @@ class allocator():
         elif self.inter ==1:
 
             self.inter_end_time = timeit.default_timer()
-            complete_time = self.inter_end_time -self.inter_end_time
+            self.complete_time = self.inter_end_time -self.inter_end_time
 
             for client_dict in self.history_list:
                 client_dict.pop('writer')
@@ -162,7 +163,7 @@ class allocator():
             yy = {str(key):val for key,val in y.items()}
 
             re = {'avg_latency':avg_latency,'avg_bw':avg_bw,'avg_acc':avg_acc,'history':self.history_list,'cost':cost,
-                  'cost_opt':cost_opt,'cost_heu':cost_heu,'x':xx,'y':yy,'overhead':overhead,'complete':complete_time}
+                  'cost_opt':cost_opt,'cost_heu':cost_heu,'x':xx,'y':yy,'overhead':overhead,'complete':self.complete_time}
             output = open(f'controller_dir_new/results/result_{self.version_stg}_{self.device_type}_{self.time_slot}_{self.inter}.pkl','wb')
             pickle.dump(re,output)
             # self.inter+=1
