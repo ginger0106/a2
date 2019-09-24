@@ -148,7 +148,7 @@ class allocator():
         elif self.inter ==1:
 
             self.inter_end_time = timeit.default_timer()
-            self.complete_time = self.inter_start_time -self.inter_end_time
+            self.complete_time = self.inter_end_time - self.inter_start_time
 
             for client_dict in self.history_list:
                 client_dict.pop('writer')
