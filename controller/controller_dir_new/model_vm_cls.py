@@ -38,7 +38,7 @@ class model_vm():
         self.device_type = device_type
         self.vm_model_type_dict = {'res18':0, 'mobile':1}
         self.vm_flp_dict = {'res18':RES18FLP,'mobile':MBV1FLP}
-        self.vm_device = {'gpu':0, 'cpu':1}
+        self.vm_device = {'cpu':0, 'gpu':1}
         self.vm_version_dict = {'res18':MODEL_VERSION,'mobile':MODEL_VERSION}
         self.model_ver_dict = self.vm_version_dict
         self.vm_batch_dict = {'res18':[2**x for x in range(BATCH_VERSION)],'mobile':[2**x for x in range(BATCH_VERSION)]}
