@@ -25,7 +25,7 @@ def control_bw(bw,path,device):
     p = subprocess.Popen(set_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     p.wait()
     print(11111,addr_lst[0],p.stdout.readlines())
-    for addr in addr_lst[1:2]:
+    for addr in addr_lst[1:3]:
         set_cmd = f'tcset {device} --rate {int(bw)}Kbps --network {addr} --direction outgoing --add'
         p = subprocess.Popen(set_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         p.wait()
@@ -33,7 +33,7 @@ def control_bw(bw,path,device):
         p = subprocess.Popen(set_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         p.wait()
         print(2222,addr,p.stdout.readlines())
-    for addr in addr_lst[2:]:
+    for addr in addr_lst[3:]:
         set_cmd = f'tcset {device} --rate {int(bw/2)}Kbps --network {addr} --direction outgoing --add'
         p = subprocess.Popen(set_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         p.wait()
