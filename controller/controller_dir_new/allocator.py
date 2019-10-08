@@ -240,7 +240,7 @@ class allocator():
         y_skijqh = y
 
         m.setObjective (
-            quicksum (quicksum (quicksum (quicksum(x_skih[s, k, i,h] #* self.model_vm_cls.c_ki[k,i]
+            quicksum (quicksum (quicksum (quicksum(x_skih[s, k, i,h] * self.model_vm_cls.c_ki[k,i]
                                         for h in self.adaptive_H(self.device_type,k,i))
                                 for s in S)
                     for k in K)
