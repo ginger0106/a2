@@ -15,7 +15,7 @@ class IperfClient():
         self.bw = 0
         self.bw_deque = deque(maxlen=int(time_slot/interval_time))
         self.bw_deque_dict = {}
-        # self.
+        self.bw_dict = {}
         self.interval_time = interval_time
         self.time_slot = time_slot
         self.avg_bw =0
@@ -48,7 +48,7 @@ class IperfClient():
         while True:
             await asyncio.sleep(self.interval_time)
             await self.iperf3(addr,port)
-            bw_deque.append(self.bw)
+            bw_deque.append(self.bw_dict[addr])
             self.pop_bw(addr,bw_deque)
             self.count+=1
             self.time =self.interval_time*self.count
@@ -66,7 +66,7 @@ class IperfClient():
         stdout, stderr = await proc.communicate()
         # print(json.loads(stdout.decode()))
         try:
-            self.bw =json.loads(stdout.decode())['end']['sum_received']['bits_per_second']/(8*1e3) ##KBps
+            self.bw_dict[addr] =json.loads(stdout.decode())['end']['sum_received']['bits_per_second']/(8*1e3) ##KBps
         except KeyError:
             await asyncio.sleep(10)
 
