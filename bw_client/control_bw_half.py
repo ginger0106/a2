@@ -33,14 +33,14 @@ def control_bw(bw,path,device):
         p = subprocess.Popen(set_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
         p.wait()
         print(2222,addr,p.stdout.readlines())
-    # for addr in addr_lst[3:]:
-    #     set_cmd = f'tcset {device} --rate {int(bw/10)}Kbps --network {addr} --direction outgoing --add'
-    #     p = subprocess.Popen(set_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    #     p.wait()
-    #     set_cmd = f'tcset {device} --rate {int(bw/10)}Kbps --network {addr} --direction incoming --add'
-    #     p = subprocess.Popen(set_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-    #     p.wait()
-    #     print('!!!',addr,p.stdout.readlines())
+    for addr in addr_lst[3:]:
+        set_cmd = f'tcset {device} --rate {int(bw/10)}Kbps --network {addr} --direction outgoing --add'
+        p = subprocess.Popen(set_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        p.wait()
+        set_cmd = f'tcset {device} --rate {int(bw/10)}Kbps --network {addr} --direction incoming --add'
+        p = subprocess.Popen(set_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+        p.wait()
+        print('!!!',addr,p.stdout.readlines())
     print('Done!')
 
 def read_addr(path):
