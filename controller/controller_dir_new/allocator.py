@@ -94,7 +94,7 @@ class allocator():
                         # len(client_dict['requests']) *
                         est_latency_for_request = IMG_SIZE[data_ver]/client_dict['bw'][server_addr]\
                                                    +self.model_vm_cls.timeout_ki[client_dict['model_name'],model_ver]/1000\
-                                                   +self.model_vm_cls.t_kih[client_dict['model_name'],model_ver,h]*1.15 #
+                                                   +self.model_vm_cls.t_kih[client_dict['model_name'],model_ver,h]*1.5 #
                         # print(len(client_dict['requests'])*IMG_SIZE[data_ver])
                         est_acc_for_request = self.acc_dict[client_dict['model_name']][model_ver][data_ver]
                         if client_dict['acc_limit']<=est_acc_for_request and \
