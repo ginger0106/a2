@@ -82,7 +82,7 @@ class IperfClient():
     async def write_log(self):
         # print(self.avg_bw_dict)
         # while True:
-        await asyncio.sleep(3)
+        await asyncio.sleep(self.interval_time)
         with open('/home/ubuntu/a2/bw_client/bw.txt','w+') as f:
             for server_num in range(self.server_len):
                 f.write(self.avg_bw_dict[server_num]+'\n')
