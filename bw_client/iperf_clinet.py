@@ -48,7 +48,7 @@ class IperfClient():
             self.count+=1
             self.time =self.interval_time*self.count
             # print(num,self.avg_bw_dict)
-            self.avg_bw_dict[num] = f'{addr},{port},{self.avg_bw}'
+            self.avg_bw_dict[num] = f'{addr},{port},{self.avg_bw},{self.bw}'
             await self.write_log()
             # print(self.avg_bw, len(self.bw_deque),self.bw)
 
