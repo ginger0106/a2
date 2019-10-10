@@ -616,13 +616,13 @@ class allocator():
             for j in range (self.J):
                 for i in range(I):
                     for h in self.adaptive_H(self.device_type,k,i):
-                        x_fractional, y_fractional,Q = self.compute_omiga(Qt,k,S,i,j,h,x_cp,y)
+                        x_fractional, y_fractional,Q,S_lst = self.compute_omiga(Qt,k,S,i,j,h,x_cp,y)
                         # if y_fractional != {}:
-                        z_skijqh, flag = self.compute_z(k, I, S, Qt, y_fractional, x_fractional,Q)
-                        overlap_set, set_all_lst = self.set_construct(S, Qt, z_skijqh, k, i, j, h,Q)
+                        z_skijqh, flag = self.compute_z(k, I, S_lst, Qt, y_fractional, x_fractional,Q)
+                        overlap_set, set_all_lst = self.set_construct(S_lst, Qt, z_skijqh, k, i, j, h,Q)
                         if len(overlap_set) !=0:
                             z_skijqh = self.change_z(Qt,k,i, j,h,z_skijqh,overlap_set,set_all_lst,x_cp,Q)
-                            results = self.resemble_x(S,Qt,k, i,j, h,z_skijqh,x,Q)
+                            results = self.resemble_x(S_lst,Qt,k, i,j, h,z_skijqh,x,Q)
                         # else:
                         #     print ('66666',h,i,j,k)
 
@@ -633,12 +633,14 @@ class allocator():
         x_fractional = {}
         y_fractional ={}
         q_lst =[]
+        s_lst = []
         for q in range (len (Qt[k])):
             for s in S:
                 if not float(x[s, k, i, h]).is_integer ():
                     y_fractional[s, k, i, j, q, h] = y[s, k, i, j, q, h]
                     x_fractional[s, k, i, h] = x[s, k, i, h]
                     q_lst.append(q)
+                    s_lst.append(s)
                 else:
                     y_fractional[s, k, i, j, q, h] = 0
                     x_fractional[s, k, i, h] = 0
@@ -646,7 +648,7 @@ class allocator():
 
 
 
-        return x_fractional,y_fractional,q_lst
+        return x_fractional,y_fractional,q_lst,s_lst
 
     def change_z(self,Qt,k,i, j,h,z_skijqh,overlap_set,set_all_lst,x,Q):
         sum_s = 0
