@@ -593,7 +593,7 @@ class allocator():
         LSH_b, RSH_b, LSH_c, RSH_c = 0.0,0.0,0.0,0.0
         for q in Q:  # for q in range (len (Qt[k])):
             for j in range (self.J):
-                print(q, j)
+                print(q, j,y)
 
                 LSH_b += float(Qt[k][q]['Y']*y[s, k, i, j, q, h])
                 LSH_c += float(Qt[k][q]['Y'] * y[s, k, i, j, q, h] * IMG_SIZE[j])
