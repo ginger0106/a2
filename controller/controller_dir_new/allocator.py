@@ -592,6 +592,7 @@ class allocator():
     def constraint_is_tight(self,Qt,k,s,i,h,x,y,Q):
         LSH_b, RSH_b, LSH_c, RSH_c = 0.0,0.0,0.0,0.0
         for q in Q:  # for q in range (len (Qt[k])):
+            print(q,j)
             for j in range (self.J):
                 LSH_b += float(Qt[k][q]['Y']*y[s, k, i, j, q, h])
                 LSH_c += float(Qt[k][q]['Y'] * y[s, k, i, j, q, h] * IMG_SIZE[j])
