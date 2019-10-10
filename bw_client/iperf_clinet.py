@@ -40,7 +40,7 @@ class IperfClient():
                 bw_deque = deque(maxlen=10)
                 self.bw_deque_dict[server_addr]= bw_deque
                 task.append(self.client(server_addr,server_port,self.bw_deque_dict[server_addr],num))
-                task.append(self.write_log())
+                # task.append(self.write_log())
                 num +=1
             self.server_len = num
         await asyncio.gather(*task)
@@ -55,7 +55,7 @@ class IperfClient():
             self.time =self.interval_time*self.count
             # print(num,self.avg_bw_dict)
             self.avg_bw_dict[num] = f'{addr},{port},{self.avg_bw_val[addr]}'
-            # await
+            await self.write_log()
             # print(self.avg_bw, len(self.bw_deque),self.bw)
 
     async def iperf3(self,addr,port):
@@ -81,11 +81,11 @@ class IperfClient():
 
     async def write_log(self):
         # print(self.avg_bw_dict)
-        while True:
-            with open('/home/ubuntu/a2/bw_client/bw.txt','w+') as f:
-                for server_num in range(self.server_len):
-                    f.write(self.avg_bw_dict[server_num]+'\n')
-            await asyncio.sleep(self.interval_time)
+        # while True:
+        with open('/home/ubuntu/a2/bw_client/bw.txt','w+') as f:
+            for server_num in range(self.server_len):
+                f.write(self.avg_bw_dict[server_num]+'\n')
+        await asyncio.sleep(self.interval_time)
 
 
     def write_bw_time(self,item,addr):
