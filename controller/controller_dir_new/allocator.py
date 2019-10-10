@@ -557,35 +557,35 @@ class allocator():
             overlap_set.append(s_max)
         return list(set(overlap_set)),set_all_lst
 
-    def compute_z(self,K,I,S,Qt,y,x,Q):
+    def compute_z(self,k,I,S,Qt,y,x,Q):
         z_skijqh = {}
         sum =0
         a,b =0,0
         flag = ''
-        for k in K:
-            for i in range (I):
-                for h in self.adaptive_H(self.device_type,k,i):
-                    for s in S:
-                        LSH_b, RSH_b, LSH_c, RSH_c = self.constraint_is_tight (Qt, k, s, i, h, x, y,Q)
-                        for q in Q: #for q in range (len (Qt[k])):
-                            for j in range (self.J):
-                                # a = float(Qt[k][q]['Y']*y[s, k, i, j, q, h]) / (self.time_slot*self.model_vm_cls.v_kih[k,i,h]*h)
-                                # b = float(Qt[k][q]['Y'] * y[s, k, i, j, q, h] * IMG_SIZE[j]) /self.server_dict[s]['BW']
-                                # print(111,a,b,LSH_b, RSH_b, LSH_c, RSH_c)
-                                # z_skijqh[s, k, i, j, q, h] = max(a,b)
-                                #
-                                if self.almost_equal(LSH_b,RSH_b):
-                                #     flag = 'vps'
-                                #     print('vps',LSH_b, RSH_b, LSH_b -RSH_b)
-                                    z_skijqh[s, k, i, j, q, h] = float(Qt[k][q]['Y']*y[s, k, i, j, q, h]) / (self.time_slot*self.model_vm_cls.v_kih[k,i,h]*h)
-                                    # print(z_skijqh[s, k, i, j, q, h],Qt[k][q]['Y'],y[s, k, i, j, q, h],self.time_slot*self.model_vm_cls.v_kih[k,i,h]*h,i,j,h,s,x[s,k,i,h] )
-                                elif self.almost_equal(LSH_c,RSH_c):
-                                #     flag = 'bw'
-                                #     print('bw')
-                                    z_skijqh[s, k, i, j, q, h] = float(Qt[k][q]['Y'] * y[s, k, i, j, q, h] * IMG_SIZE[j]) /self.server_dict[s]['BW']
-                                # else:
-                                #     print(LSH_b, RSH_b, LSH_c, RSH_c)
-                                #     print('sssssssss')
+        #for k in K:
+        for i in range (I):
+            for h in self.adaptive_H(self.device_type,k,i):
+                for s in S:
+                    LSH_b, RSH_b, LSH_c, RSH_c = self.constraint_is_tight (Qt, k, s, i, h, x, y,Q)
+                    for q in Q: #for q in range (len (Qt[k])):
+                        for j in range (self.J):
+                            # a = float(Qt[k][q]['Y']*y[s, k, i, j, q, h]) / (self.time_slot*self.model_vm_cls.v_kih[k,i,h]*h)
+                            # b = float(Qt[k][q]['Y'] * y[s, k, i, j, q, h] * IMG_SIZE[j]) /self.server_dict[s]['BW']
+                            # print(111,a,b,LSH_b, RSH_b, LSH_c, RSH_c)
+                            # z_skijqh[s, k, i, j, q, h] = max(a,b)
+                            #
+                            if self.almost_equal(LSH_b,RSH_b):
+                            #     flag = 'vps'
+                            #     print('vps',LSH_b, RSH_b, LSH_b -RSH_b)
+                                z_skijqh[s, k, i, j, q, h] = float(Qt[k][q]['Y']*y[s, k, i, j, q, h]) / (self.time_slot*self.model_vm_cls.v_kih[k,i,h]*h)
+                                # print(z_skijqh[s, k, i, j, q, h],Qt[k][q]['Y'],y[s, k, i, j, q, h],self.time_slot*self.model_vm_cls.v_kih[k,i,h]*h,i,j,h,s,x[s,k,i,h] )
+                            elif self.almost_equal(LSH_c,RSH_c):
+                            #     flag = 'bw'
+                            #     print('bw')
+                                z_skijqh[s, k, i, j, q, h] = float(Qt[k][q]['Y'] * y[s, k, i, j, q, h] * IMG_SIZE[j]) /self.server_dict[s]['BW']
+                            # else:
+                            #     print(LSH_b, RSH_b, LSH_c, RSH_c)
+                            #     print('sssssssss')
 
         return z_skijqh,flag
 
@@ -618,7 +618,7 @@ class allocator():
                     for h in self.adaptive_H(self.device_type,k,i):
                         x_fractional, y_fractional,Q = self.compute_omiga(Qt,k,S,i,j,h,x_cp,y)
                         # if y_fractional != {}:
-                        z_skijqh, flag = self.compute_z(K, I, S, Qt, y_fractional, x_fractional,Q)
+                        z_skijqh, flag = self.compute_z(k, I, S, Qt, y_fractional, x_fractional,Q)
                         overlap_set, set_all_lst = self.set_construct(S, Qt, z_skijqh, k, i, j, h,Q)
                         if len(overlap_set) !=0:
                             z_skijqh = self.change_z(Qt,k,i, j,h,z_skijqh,overlap_set,set_all_lst,x_cp,Q)
