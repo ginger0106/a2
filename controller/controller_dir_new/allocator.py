@@ -558,7 +558,7 @@ class allocator():
             overlap_set.append(s_max)
         return list(set(overlap_set)),set_all_lst
 
-    def compute_z(self,k,I,S,Qt,y,x,Q):
+    def compute_z(self,k,I,S,Qt,y,x,Q,j):
         z_skijqh = {}
         sum =0
         a,b =0,0
@@ -567,7 +567,7 @@ class allocator():
         for i in range (I):
             for h in self.adaptive_H(self.device_type,k,i):
                 for s in S:
-                    LSH_b, RSH_b, LSH_c, RSH_c = self.constraint_is_tight (Qt, k, s, i, h, x, y,Q)
+                    LSH_b, RSH_b, LSH_c, RSH_c = self.constraint_is_tight (Qt, k, s, i, h, x, y,Q,j)
                     for q in Q: #for q in range (len (Qt[k])):
                         for j in range (self.J):
                             # a = float(Qt[k][q]['Y']*y[s, k, i, j, q, h]) / (self.time_slot*self.model_vm_cls.v_kih[k,i,h]*h)
@@ -590,11 +590,11 @@ class allocator():
 
         return z_skijqh,flag
 
-    def constraint_is_tight(self,Qt,k,s,i,h,x,y,Q):
+    def constraint_is_tight(self,Qt,k,s,i,h,x,y,Q,j):
         LSH_b, RSH_b, LSH_c, RSH_c = 0.0,0.0,0.0,0.0
         for q in Q:  # for q in range (len (Qt[k])):
             for j in range (self.J):
-                #print(q, j,y)
+                print(q, j,y)
 
                 LSH_b += float(Qt[k][q]['Y']*y[s, k, i, j, q, h])
                 LSH_c += float(Qt[k][q]['Y'] * y[s, k, i, j, q, h] * IMG_SIZE[j])
@@ -619,7 +619,7 @@ class allocator():
                     for h in self.adaptive_H(self.device_type,k,i):
                         x_fractional, y_fractional,Q,S_lst = self.compute_omiga(Qt,k,S,i,j,h,x_cp,y)
                         # if y_fractional != {}:
-                        z_skijqh, flag = self.compute_z(k, I, S_lst, Qt, y_fractional, x_fractional,Q)
+                        z_skijqh, flag = self.compute_z(k, I, S_lst, Qt, y_fractional, x_fractional,Q,j)
                         if z_skijqh!={}:
                             overlap_set, set_all_lst = self.set_construct(S_lst, Qt, z_skijqh, k, i, j, h,Q)
                             if len(overlap_set) !=0:
