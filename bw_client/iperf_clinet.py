@@ -45,6 +45,7 @@ class IperfClient():
         await asyncio.gather(*task)
 
     async def client(self,addr,port,bw_deque,num):
+        self.bw_dict[addr] = 0
         while True:
             await asyncio.sleep(self.interval_time)
             await self.iperf3(addr,port)
