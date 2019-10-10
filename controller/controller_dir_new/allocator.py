@@ -631,7 +631,7 @@ class allocator():
 
         # if flag == 'bw':
         # print(results)
-        return x
+        return results
     def compute_omiga(self,Qt,k,S,i,j,h,x,y):
         x_fractional = {}
         y_fractional ={}
