@@ -535,6 +535,7 @@ class allocator():
             for s in S:
                 # s = item[0]
                 # print(set_q_dict,s,k)
+                print(z_skijqh)
                 if (s in set_q_dict) and (z_skijqh[s, k, i, j, q, h] >0):
                     set_all_lst.append(set_q_dict)
                     break
