@@ -525,7 +525,7 @@ class allocator():
         url = f'http://{worker_addr}:{port}/v1/models/{model_name}_dcp_{model_ver}:classify'
         return url
 
-    def set_construct(self, S, Qt, z_skijqh, y_fractional , k, i, j, h):
+    def set_construct(self, S, Qt, z_skijqh, k, i, j, h):
         # z_skijqh={}
         set_all_lst = [] #[{q:[1,2,3]}]
         overlap_set = [] # [s1:[q1,q2]]
@@ -608,23 +608,24 @@ class allocator():
                         if x_cp[s, k, i, h]!=0:
                             print(s, k, i, h,x[s, k, i, h])
 
-        z_skijqh,flag = self.compute_z(K,I,S,Qt,y,x)
+        #z_skijqh,flag = self.compute_z(K,I,S,Qt,y,x)
         for k in K:
             for j in range (self.J):
                 for i in range(I):
                     for h in self.adaptive_H(self.device_type,k,i):
                         x_fractional, y_fractional = self.compute_omiga(Qt,k,S,i,j,h,x_cp,y)
                         # if y_fractional != {}:
-                        overlap_set, set_all_lst = self.set_construct(S, Qt, z_skijqh, y_fractional , k, i, j, h)
+                        z_skijqh, flag = self.compute_z(K, I, S, Qt, y_fractional, x_fractional)
+                        overlap_set, set_all_lst = self.set_construct(S, Qt, z_skijqh, k, i, j, h)
                         if len(overlap_set) !=0:
                             z_skijqh = self.change_z(Qt,k,i, j,h,z_skijqh,overlap_set,set_all_lst,x_cp)
-                            results = self.resemble_x(S,Qt,k, i,j, h,z_skijqh,x,x_fractional)
+                            results = self.resemble_x(S,Qt,k, i,j, h,z_skijqh,x)
                         # else:
                         #     print ('66666',h,i,j,k)
 
         # if flag == 'bw':
         # print(results)
-        return results
+        return x
     def compute_omiga(self,Qt,k,S,i,j,h,x,y):
         x_fractional = {}
         y_fractional ={}
@@ -633,6 +634,13 @@ class allocator():
                 if not float(x[s, k, i, h]).is_integer ():
                     y_fractional[s, k, i, j, q, h] = y[s, k, i, j, q, h]
                     x_fractional[s, k, i, h] = x[s, k, i, h]
+                else:
+                    y_fractional[s, k, i, j, q, h] = 0
+                    x_fractional[s, k, i, h] = 0
+
+
+
+
         return x_fractional,y_fractional
 
     def change_z(self,Qt,k,i, j,h,z_skijqh,overlap_set,set_all_lst,x):
@@ -717,7 +725,7 @@ class allocator():
             if s in theta_q:
                 return s
 
-    def resemble_x(self,S,Qt,k, i,j, h,z_skijqh,x,x_fractional):
+    def resemble_x(self,S,Qt,k, i,j, h,z_skijqh,x):
 
         for s in S:
             sum_z = self.compute_z_in_s (s, Qt, k, i, h, z_skijqh, j)
