@@ -593,11 +593,11 @@ class allocator():
     def constraint_is_tight(self,Qt,k,s,i,h,x,y,Q,j):
         LSH_b, RSH_b, LSH_c, RSH_c = 0.0,0.0,0.0,0.0
         for q in Q:  # for q in range (len (Qt[k])):
-            for j in range (self.J):
-                print(q, j,y)
+            #for j in range (self.J):
+                #print(q, j,y)
 
-                LSH_b += float(Qt[k][q]['Y']*y[s, k, i, j, q, h])
-                LSH_c += float(Qt[k][q]['Y'] * y[s, k, i, j, q, h] * IMG_SIZE[j])
+            LSH_b += float(Qt[k][q]['Y']*y[s, k, i, j, q, h])
+            LSH_c += float(Qt[k][q]['Y'] * y[s, k, i, j, q, h] * IMG_SIZE[j])
         RSH_b = float(self.time_slot*self.model_vm_cls.v_kih[k,i,h]*x[s,k,i,h]*h)
         RSH_c = float(self.server_dict[s]['BW']*x[s,k,i,h])
         return LSH_b,RSH_b,LSH_c,RSH_c
