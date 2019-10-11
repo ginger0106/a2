@@ -627,9 +627,10 @@ class allocator():
                         z_skijqh, flag = self.compute_z(k, i, S_lst, Qt, y_fractional, x_fractional,Q,j,h)
                         if z_skijqh!={}:
                             overlap_set, set_all_lst = self.set_construct(S_lst, Qt, z_skijqh, k, i, j, h,Q)
-                            if len(overlap_set) !=0:
-                                z_skijqh = self.change_z(Qt,k,i, j,h,z_skijqh,overlap_set,set_all_lst,x,Q)
-                                self.resemble_x(S_lst,Qt,k, i,j, h,z_skijqh,x,Q)
+                            #if len(overlap_set) !=0:
+                            print(overlap_set)
+                            z_skijqh = self.change_z(Qt,k,i, j,h,z_skijqh,overlap_set,set_all_lst,x,Q)
+                            self.resemble_x(S_lst,Qt,k, i,j, h,z_skijqh,x,Q)
                         # else:
                         #     print ('66666',h,i,j,k)
 
