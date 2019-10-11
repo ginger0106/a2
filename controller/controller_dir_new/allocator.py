@@ -370,15 +370,12 @@ class allocator():
                             if sum_for_server>8:
                                 print('!!!!!!!!!!!!!more than 8')
                                 # exit()
-                            print(port,int(x[s,k,i,h]), (x[s,k,i,h]))
-
                             item[str(h)+k+'_dcp_'+str(i)] = {'port':[port+x for x in range(int(x[s,k,i,h]))],'frac':self.model_vm_cls.frac_ki[k,i],
                                        'batch':h, 'timeout': self.model_vm_cls.timeout_ki[k,i],
                                        'threads': 8, 'device': self.model_vm_cls.hw_ki[k,i]
                                        }
                             port += int (x[s, k, i, h])
             allocation_for_all_server_dict[s]= item
-            #print(s,item)
         return allocation_for_all_server_dict
 
     def process_gurobi_result_y(self,K,I,S,Qt,x,y):
@@ -528,17 +525,15 @@ class allocator():
         url = f'http://{worker_addr}:{port}/v1/models/{model_name}_dcp_{model_ver}:classify'
         return url
 
-    def set_construct(self, S, Qt, z_skijqh, k, i, j, h,Q):
+    def set_construct(self, S, Qt, z_skijqh, y_fractional , k, i, j, h):
         # z_skijqh={}
         set_all_lst = [] #[{q:[1,2,3]}]
         overlap_set = [] # [s1:[q1,q2]]
-        #for q in range (len (Qt[k])):
-        for q in Q:  # for q in range (len (Qt[k])):
+        for q in range (len (Qt[k])):
             set_q_dict = Qt[k][q]['avai_server_set'].copy()
             for s in S:
                 # s = item[0]
                 # print(set_q_dict,s,k)
-                #print(z_skijqh)
                 if (s in set_q_dict) and (z_skijqh[s, k, i, j, q, h] >0):
                     set_all_lst.append(set_q_dict)
                     break
@@ -561,46 +556,26 @@ class allocator():
             overlap_set.append(s_max)
         return list(set(overlap_set)),set_all_lst
 
-    def compute_z(self,k,i,S,Qt,y,x,Q,j,h):
+    def compute_z(self,K,I,S,Qt,y,x):
         z_skijqh = {}
-        sum =0
-        a,b =0,0
-        flag = ''
-        #for k in K:
-      #  for i in range (I):
-      #      for h in self.adaptive_H(self.device_type,k,i):
-        for s in S:
-            LSH_b, RSH_b, LSH_c, RSH_c = self.constraint_is_tight (Qt, k, s, i, h, x, y,Q,j)
-            #print(LSH_b, RSH_b, LSH_c, RSH_c)
-            for q in Q: #for q in range (len (Qt[k])):
-           #     for j in range (self.J):
-                    # a = float(Qt[k][q]['Y']*y[s, k, i, j, q, h]) / (self.time_slot*self.model_vm_cls.v_kih[k,i,h]*h)
-                    # b = float(Qt[k][q]['Y'] * y[s, k, i, j, q, h] * IMG_SIZE[j]) /self.server_dict[s]['BW']
-                    # print(111,a,b,LSH_b, RSH_b, LSH_c, RSH_c)
-                    # z_skijqh[s, k, i, j, q, h] = max(a,b)
-                    #
-                if self.almost_equal(LSH_b,RSH_b):
-                    #     flag = 'vps'
-                    #     print('vps',LSH_b, RSH_b, LSH_b -RSH_b)
-                    z_skijqh[s, k, i, j, q, h] = float(Qt[k][q]['Y']*y[s, k, i, j, q, h]) / (self.time_slot*self.model_vm_cls.v_kih[k,i,h]*h)
-                        # print(z_skijqh[s, k, i, j, q, h],Qt[k][q]['Y'],y[s, k, i, j, q, h],self.time_slot*self.model_vm_cls.v_kih[k,i,h]*h,i,j,h,s,x[s,k,i,h] )
-                elif self.almost_equal(LSH_c,RSH_c):
-                    #     flag = 'bw'
-                    #     print('bw')
-                    z_skijqh[s, k, i, j, q, h] = float(Qt[k][q]['Y'] * y[s, k, i, j, q, h] * IMG_SIZE[j]) /self.server_dict[s]['BW']
-                    # else:
-                    #     print(LSH_b, RSH_b, LSH_c, RSH_c)
-                    #     print('sssssssss')
+        for k in K:
+            for i in range (I):
+                for h in self.adaptive_H(self.device_type,k,i):
+                    for s in S:
+                        LSH_b, RSH_b, LSH_c, RSH_c = self.constraint_is_tight (Qt, k, s, i, h, x, y)
+                        for q in range (len (Qt[k])):
+                            for j in range (self.J):
+                                if self.almost_equal(LSH_b,RSH_b):
+                                    z_skijqh[s, k, i, j, q, h] = float(Qt[k][q]['Y']*y[s, k, i, j, q, h]) / (self.time_slot*self.model_vm_cls.v_kih[k,i,h]*h)
+                                elif self.almost_equal(LSH_c,RSH_c):
+                                    z_skijqh[s, k, i, j, q, h] = float(Qt[k][q]['Y'] * y[s, k, i, j, q, h] * IMG_SIZE[j]) /self.server_dict[s]['BW']
 
-        return z_skijqh,flag
+        return z_skijqh
 
-    def constraint_is_tight(self,Qt,k,s,i,h,x,y,Q,j):
+    def constraint_is_tight(self,Qt,k,s,i,h,x,y):
         LSH_b, RSH_b, LSH_c, RSH_c = 0.0,0.0,0.0,0.0
-        #print(y)
         for q in range (len (Qt[k])):
             for j in range (self.J):
-            #print(q, j)
-
                 LSH_b += float(Qt[k][q]['Y']*y[s, k, i, j, q, h])
                 LSH_c += float(Qt[k][q]['Y'] * y[s, k, i, j, q, h] * IMG_SIZE[j])
         RSH_b = float(self.time_slot*self.model_vm_cls.v_kih[k,i,h]*x[s,k,i,h]*h)
@@ -617,54 +592,33 @@ class allocator():
                         if x_cp[s, k, i, h]!=0:
                             print(s, k, i, h,x[s, k, i, h])
 
-        #z_skijqh,flag = self.compute_z(K,I,S,Qt,y,x)
-        #results = {}
+        z_skijqh = self.compute_z(K,I,S,Qt,y,x)
         for k in K:
             for j in range (self.J):
                 for i in range(I):
                     for h in self.adaptive_H(self.device_type,k,i):
-                        x_fractional, y_fractional,Q,S_lst = self.compute_omiga(Qt,k,S,i,j,h,x,y)
+                        x_fractional, y_fractional = self.compute_omiga(Qt,k,S,i,j,h,x_cp,y)
                         # if y_fractional != {}:
-                        z_skijqh, flag = self.compute_z(k, i, S_lst, Qt, y_fractional, x_fractional,Q,j,h)
-                        if z_skijqh!={}:
-                            overlap_set, set_all_lst = self.set_construct(S_lst, Qt, z_skijqh, k, i, j, h,Q)
-                            if len(overlap_set) !=0:
-                                z_skijqh = self.change_z(Qt,k,i, j,h,z_skijqh,overlap_set,set_all_lst,x,Q)
-                                self.resemble_x(S_lst,Qt,k, i,j, h,z_skijqh,x,Q)
-                        # else:
-                        #     print ('66666',h,i,j,k)
+                        overlap_set, set_all_lst = self.set_construct(S, Qt, z_skijqh, y_fractional , k, i, j, h)
+                        if len(overlap_set) !=0:
+                            z_skijqh = self.change_z(Qt,k,i, j,h,z_skijqh,overlap_set,set_all_lst,x_cp,S)
+                            results = self.resemble_x(S,Qt,k, i,j, h,z_skijqh,x)
 
-        # if flag == 'bw':
-        # print(results)
-        return x
+        return results
     def compute_omiga(self,Qt,k,S,i,j,h,x,y):
         x_fractional = {}
         y_fractional ={}
-        q_lst =[]
-        s_lst = []
-        for j in range(self.J):
-            for q in range (len (Qt[k])):
-                for s in S:
-                    if not float(x[s, k, i, h]).is_integer ():
-                        y_fractional[s, k, i, j, q, h] = y[s, k, i, j, q, h]
-                        x_fractional[s, k, i, h] = x[s, k, i, h]
-                        q_lst.append(q)
-                        s_lst.append(s)
-                    else:
-                        y_fractional[s, k, i, j, q, h] = 0
-                        x_fractional[s, k, i, h] = 0
+        for q in range (len (Qt[k])):
+            for s in S:
+                if not float(x[s, k, i, h]).is_integer ():
+                    y_fractional[s, k, i, j, q, h] = y[s, k, i, j, q, h]
+                    x_fractional[s, k, i, h] = x[s, k, i, h]
+        return x_fractional,y_fractional
 
+    def change_z(self,Qt,k,i, j,h,z_skijqh,overlap_set,set_all_lst,x,S):
 
-
-
-        return x_fractional,y_fractional,q_lst,s_lst
-
-    def change_z(self,Qt,k,i, j,h,z_skijqh,overlap_set,set_all_lst,x,Q):
-        sum_s = 0
-        sum_s_hat = 0
-        #x_cp = x.copy()
-        print(z_skijqh)
-        for q in Q:  #for q in range (len (Qt[k])):
+        x_cp = x.copy()
+        for q in range (len (Qt[k])):
             theta_q = Qt[k][q]['avai_server_set'].copy ()
             if theta_q in set_all_lst:
                 s_hat = self.find_s_hat(theta_q,overlap_set)
@@ -691,12 +645,14 @@ class allocator():
                             # break
                         # print (99,self.compute_z_in_s(s_hat,Qt,k, i,h,z_skijqh,j),self.compute_z_in_s(s,Qt,k, i,h,z_skijqh,j),np.ceil(x[s, k, i, h]), np.floor (x[s, k, i, h]), k)
 #################
-                        # if self.compute_z_in_s (s, Qt, k, i, h, z_skijqh, j) > np.floor(x_cp[s, k, i, h]):
-                        #     print (99, self.compute_z_in_s (s, Qt, k, i, h, z_skijqh, j), np.floor (x_cp[s, k, i, h]), s, k, i,h, x_cp[s, k, i, h])
+                        #    print (99, self.compute_z_in_s (s, Qt, k, i, h, z_skijqh, j), np.floor (x_cp[s, k, i, h]), s, k, i,h, x_cp[s, k, i, h])
 
-                        z_skijqh[s, k, i, j, q, h], z_skijqh[s_hat, k, i, j, q, h] = self.change_z_core(z_skijqh[s, k, i, j, q, h],z_skijqh[s_hat, k, i, j, q, h])
-##############
-                           # break
+                        x_resemble = self.resemble_x(S,Qt,k, i,j, h,z_skijqh,x_cp)
+                        if not float(x_resemble[s, k, i, h]).is_integer():
+                            z_skijqh[s, k, i, j, q, h], z_skijqh[s_hat, k, i, j, q, h] = self.change_z_core(
+                                z_skijqh[s, k, i, j, q, h], z_skijqh[s_hat, k, i, j, q, h])
+
+                        # break
                             # return z_skijqh
                         # else:
                         #     print (88, self.compute_z_in_s (s, Qt, k, i, h, z_skijqh, j), (x[s, k, i, h]))
@@ -742,14 +698,12 @@ class allocator():
             if s in theta_q:
                 return s
 
-    def resemble_x(self,S,Qt,k, i,j, h,z_skijqh,x,Q):
-        #print(11111)
-        for s in S:
+    def resemble_x(self,S,Qt,k, i,j, h,z_skijqh,x):
 
-            sum_z = self.compute_z_in_s (s, Qt, k, i, h, z_skijqh, j,Q)
+        for s in S:
+            sum_z = self.compute_z_in_s (s, Qt, k, i, h, z_skijqh)
             # print(222,s, k, i, h,x[s, k, i, h],sum_z)
             x[s, k, i, h] = int (np.ceil (sum_z))
-            print(2222,s,x[s, k, i, h])
             # if (s, k, i, h) in x_fractional.keys ():
             #     x[s, k, i, h] = int (np.ceil (sum_z))
             #     print('issss',s, k, i, h,x[s, k, i, h],sum_z)
@@ -758,14 +712,14 @@ class allocator():
             #     x[s, k, i, h] = int (np.ceil (x[s, k, i, h]))
             #     # print('nottt', s, k, i, h,x[s, k, i, h],sum_z)
 
-        #return x
+        return x
 
-    def compute_z_in_s(self,s,Qt,k, i,h,z_skijqh,j,Q):
+    def compute_z_in_s(self,s,Qt,k, i,h,z_skijqh):
         sum_z = 0
-        for q in Q:  #for q in range (len (Qt[k])):
-            for n in range(self.J):
+        for q in range (len (Qt[k])):
+            for j in range(self.J):
                 # print(z_skijqh[s, k, i, n, q, h])
-                sum_z += z_skijqh[s, k, i, n, q, h]
+                sum_z += z_skijqh[s, k, i, j, q, h]
         # print(s,k,i,h,sum_z)
 
         return sum_z
