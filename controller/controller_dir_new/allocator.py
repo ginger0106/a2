@@ -598,11 +598,11 @@ class allocator():
         LSH_b, RSH_b, LSH_c, RSH_c = 0.0,0.0,0.0,0.0
         #print(y)
         for q in Q:  # for q in range (len (Qt[k])):
-            #for j in range (self.J):
+            for j in range (self.J):
             #print(q, j)
 
-            LSH_b += float(Qt[k][q]['Y']*y[s, k, i, j, q, h])
-            LSH_c += float(Qt[k][q]['Y'] * y[s, k, i, j, q, h] * IMG_SIZE[j])
+                LSH_b += float(Qt[k][q]['Y']*y[s, k, i, j, q, h])
+                LSH_c += float(Qt[k][q]['Y'] * y[s, k, i, j, q, h] * IMG_SIZE[j])
         RSH_b = float(self.time_slot*self.model_vm_cls.v_kih[k,i,h]*x[s,k,i,h]*h)
         RSH_c = float(self.server_dict[s]['BW']*x[s,k,i,h])
         return LSH_b,RSH_b,LSH_c,RSH_c
@@ -642,16 +642,17 @@ class allocator():
         y_fractional ={}
         q_lst =[]
         s_lst = []
-        for q in range (len (Qt[k])):
-            for s in S:
-                if not float(x[s, k, i, h]).is_integer ():
-                    y_fractional[s, k, i, j, q, h] = y[s, k, i, j, q, h]
-                    x_fractional[s, k, i, h] = x[s, k, i, h]
-                    q_lst.append(q)
-                    s_lst.append(s)
-                else:
-                    y_fractional[s, k, i, j, q, h] = 0
-                    x_fractional[s, k, i, h] = 0
+        for j in range(self.J):
+            for q in range (len (Qt[k])):
+                for s in S:
+                    if not float(x[s, k, i, h]).is_integer ():
+                        y_fractional[s, k, i, j, q, h] = y[s, k, i, j, q, h]
+                        x_fractional[s, k, i, h] = x[s, k, i, h]
+                        q_lst.append(q)
+                        s_lst.append(s)
+                    else:
+                        y_fractional[s, k, i, j, q, h] = 0
+                        x_fractional[s, k, i, h] = 0
 
 
 
