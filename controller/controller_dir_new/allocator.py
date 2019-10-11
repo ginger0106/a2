@@ -597,7 +597,7 @@ class allocator():
     def constraint_is_tight(self,Qt,k,s,i,h,x,y,Q,j):
         LSH_b, RSH_b, LSH_c, RSH_c = 0.0,0.0,0.0,0.0
         #print(y)
-        for q in Q:  # for q in range (len (Qt[k])):
+        for q in range (len (Qt[k])):
             for j in range (self.J):
             #print(q, j)
 
