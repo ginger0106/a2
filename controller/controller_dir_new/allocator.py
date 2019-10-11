@@ -663,6 +663,7 @@ class allocator():
         sum_s = 0
         sum_s_hat = 0
         #x_cp = x.copy()
+        print(z_skijqh)
         for q in Q:  #for q in range (len (Qt[k])):
             theta_q = Qt[k][q]['avai_server_set'].copy ()
             if theta_q in set_all_lst:
