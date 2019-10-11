@@ -649,7 +649,7 @@ class allocator():
 
                         x_resemble = self.compute_z_in_s(s,Qt,k, i,h,z_skijqh)
                         print(z_skijqh[s, k, i, j, q, h], z_skijqh[s_hat, k, i, j, q, h],x_resemble)
-                        if  float(x_resemble).is_integer():
+                        if  self.almost_equal(x_resemble,np.floor (x_cp[s, k, i, h]))or self.almost_equal(x_resemble,np.ceil(x_cp[s, k, i, h])):
                             print('integer')
                         else:
                             print('not')
@@ -744,7 +744,7 @@ class allocator():
 
     def almost_equal(self,x,N):
         # print(x,N)
-        if x - N >-0.01 and x - N <=0.1:
+        if x - N >-0.05 and x - N <=0.05:
             return True
         else:
             return False
