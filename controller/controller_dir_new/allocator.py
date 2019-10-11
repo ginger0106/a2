@@ -753,7 +753,7 @@ class allocator():
             #     x[s, k, i, h] = int (np.ceil (x[s, k, i, h]))
             #     # print('nottt', s, k, i, h,x[s, k, i, h],sum_z)
 
-        return x
+        #return x
 
     def compute_z_in_s(self,s,Qt,k, i,h,z_skijqh,j,Q):
         sum_z = 0
