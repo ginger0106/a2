@@ -649,8 +649,10 @@ class allocator():
 
                         x_resemble = self.resemble_x(S,Qt,k, i,j, h,z_skijqh,x_cp)
                         print(z_skijqh[s, k, i, j, q, h], z_skijqh[s_hat, k, i, j, q, h],x_resemble[s,k,i,h])
-                        if not float(x_resemble[s, k, i, h]).is_integer():
-                            print('not integer')
+                        if  float(x_resemble[s, k, i, h]).is_integer():
+                            print('integer')
+                        else:
+                            print('not')
                             z_skijqh[s, k, i, j, q, h], z_skijqh[s_hat, k, i, j, q, h] = self.change_z_core(
                                 z_skijqh[s, k, i, j, q, h], z_skijqh[s_hat, k, i, j, q, h])
 
