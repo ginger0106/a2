@@ -370,13 +370,15 @@ class allocator():
                             if sum_for_server>8:
                                 print('!!!!!!!!!!!!!more than 8')
                                 # exit()
+                            print(port,int(x[s,k,i,h]), [port+x for x in range(int(x[s,k,i,h])) ] )
+
                             item[str(h)+k+'_dcp_'+str(i)] = {'port':[port+x for x in range(int(x[s,k,i,h]))],'frac':self.model_vm_cls.frac_ki[k,i],
                                        'batch':h, 'timeout': self.model_vm_cls.timeout_ki[k,i],
                                        'threads': 8, 'device': self.model_vm_cls.hw_ki[k,i]
                                        }
                             port += int (x[s, k, i, h])
             allocation_for_all_server_dict[s]= item
-            print(s,item)
+            #print(s,item)
         return allocation_for_all_server_dict
 
     def process_gurobi_result_y(self,K,I,S,Qt,x,y):
