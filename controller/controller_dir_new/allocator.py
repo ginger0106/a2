@@ -647,7 +647,7 @@ class allocator():
 #################
                         #    print (99, self.compute_z_in_s (s, Qt, k, i, h, z_skijqh, j), np.floor (x_cp[s, k, i, h]), s, k, i,h, x_cp[s, k, i, h])
 
-                        x_resemble = self.resemble_x(S,Qt,k, i,j, h,z_skijqh,x_cp)
+                        x_resemble = self.compute_z_in_s(s,Qt,k, i,h,z_skijqh)
                         print(z_skijqh[s, k, i, j, q, h], z_skijqh[s_hat, k, i, j, q, h],x_resemble[s,k,i,h])
                         if  float(x_resemble[s, k, i, h]).is_integer():
                             print('integer')
