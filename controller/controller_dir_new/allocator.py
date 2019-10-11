@@ -614,6 +614,7 @@ class allocator():
                             print(s, k, i, h,x[s, k, i, h])
 
         #z_skijqh,flag = self.compute_z(K,I,S,Qt,y,x)
+        results = x
         for k in K:
             for j in range (self.J):
                 for i in range(I):
