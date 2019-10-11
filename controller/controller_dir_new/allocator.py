@@ -538,7 +538,7 @@ class allocator():
             for s in S:
                 # s = item[0]
                 # print(set_q_dict,s,k)
-                print(z_skijqh)
+                #print(z_skijqh)
                 if (s in set_q_dict) and (z_skijqh[s, k, i, j, q, h] >0):
                     set_all_lst.append(set_q_dict)
                     break
@@ -571,7 +571,7 @@ class allocator():
       #      for h in self.adaptive_H(self.device_type,k,i):
         for s in S:
             LSH_b, RSH_b, LSH_c, RSH_c = self.constraint_is_tight (Qt, k, s, i, h, x, y,Q,j)
-            print(LSH_b, RSH_b, LSH_c, RSH_c)
+            #print(LSH_b, RSH_b, LSH_c, RSH_c)
             for q in Q: #for q in range (len (Qt[k])):
            #     for j in range (self.J):
                     # a = float(Qt[k][q]['Y']*y[s, k, i, j, q, h]) / (self.time_slot*self.model_vm_cls.v_kih[k,i,h]*h)
@@ -742,7 +742,7 @@ class allocator():
                 return s
 
     def resemble_x(self,S,Qt,k, i,j, h,z_skijqh,x,Q):
-        print(11111)
+        #print(11111)
         for s in S:
 
             sum_z = self.compute_z_in_s (s, Qt, k, i, h, z_skijqh, j,Q)
