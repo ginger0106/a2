@@ -745,6 +745,7 @@ class allocator():
             sum_z = self.compute_z_in_s (s, Qt, k, i, h, z_skijqh, j,Q)
             # print(222,s, k, i, h,x[s, k, i, h],sum_z)
             x[s, k, i, h] = int (np.ceil (sum_z))
+            print(x[s, k, i, h])
             # if (s, k, i, h) in x_fractional.keys ():
             #     x[s, k, i, h] = int (np.ceil (sum_z))
             #     print('issss',s, k, i, h,x[s, k, i, h],sum_z)
