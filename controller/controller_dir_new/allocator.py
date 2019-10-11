@@ -740,12 +740,13 @@ class allocator():
                 return s
 
     def resemble_x(self,S,Qt,k, i,j, h,z_skijqh,x,Q):
-
+        print(11111)
         for s in S:
+
             sum_z = self.compute_z_in_s (s, Qt, k, i, h, z_skijqh, j,Q)
             # print(222,s, k, i, h,x[s, k, i, h],sum_z)
             x[s, k, i, h] = int (np.ceil (sum_z))
-            print(x[s, k, i, h])
+            print(2222,s,x[s, k, i, h])
             # if (s, k, i, h) in x_fractional.keys ():
             #     x[s, k, i, h] = int (np.ceil (sum_z))
             #     print('issss',s, k, i, h,x[s, k, i, h],sum_z)
