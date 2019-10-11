@@ -376,6 +376,7 @@ class allocator():
                                        }
                             port += int (x[s, k, i, h])
             allocation_for_all_server_dict[s]= item
+            print(s,item)
         return allocation_for_all_server_dict
 
     def process_gurobi_result_y(self,K,I,S,Qt,x,y):
@@ -619,13 +620,13 @@ class allocator():
             for j in range (self.J):
                 for i in range(I):
                     for h in self.adaptive_H(self.device_type,k,i):
-                        x_fractional, y_fractional,Q,S_lst = self.compute_omiga(Qt,k,S,i,j,h,x_cp,y)
+                        x_fractional, y_fractional,Q,S_lst = self.compute_omiga(Qt,k,S,i,j,h,x,y)
                         # if y_fractional != {}:
                         z_skijqh, flag = self.compute_z(k, i, S_lst, Qt, y_fractional, x_fractional,Q,j,h)
                         if z_skijqh!={}:
                             overlap_set, set_all_lst = self.set_construct(S_lst, Qt, z_skijqh, k, i, j, h,Q)
                             if len(overlap_set) !=0:
-                                z_skijqh = self.change_z(Qt,k,i, j,h,z_skijqh,overlap_set,set_all_lst,x_cp,Q)
+                                z_skijqh = self.change_z(Qt,k,i, j,h,z_skijqh,overlap_set,set_all_lst,x,Q)
                                 results = self.resemble_x(S_lst,Qt,k, i,j, h,z_skijqh,x,Q)
                         # else:
                         #     print ('66666',h,i,j,k)
@@ -657,7 +658,7 @@ class allocator():
     def change_z(self,Qt,k,i, j,h,z_skijqh,overlap_set,set_all_lst,x,Q):
         sum_s = 0
         sum_s_hat = 0
-        x_cp = x.copy()
+        #x_cp = x.copy()
         for q in Q:  #for q in range (len (Qt[k])):
             theta_q = Qt[k][q]['avai_server_set'].copy ()
             if theta_q in set_all_lst:
@@ -739,7 +740,7 @@ class allocator():
     def resemble_x(self,S,Qt,k, i,j, h,z_skijqh,x,Q):
 
         for s in S:
-            sum_z = self.compute_z_in_s (s, Qt, k, i, h, z_skijqh, j)
+            sum_z = self.compute_z_in_s (s, Qt, k, i, h, z_skijqh, j,Q)
             # print(222,s, k, i, h,x[s, k, i, h],sum_z)
             x[s, k, i, h] = int (np.ceil (sum_z))
             # if (s, k, i, h) in x_fractional.keys ():
