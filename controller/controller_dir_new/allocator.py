@@ -677,7 +677,9 @@ class allocator():
 
             x_resemble = self.compute_z_in_s(s,Qt,k, i,h,z_skijqh)
             #(z_skijqh[s, k, i, j, q, h], z_skijqh[s_hat, k, i, j, q, h],x_resemble)
-            if  not (self.almost_equal(x_resemble,np.floor (x_cp[s, k, i, h]))or self.almost_equal(x_resemble,np.ceil(x_cp[s, k, i, h]))):
+            if  (self.almost_equal(x_resemble,np.floor (x_cp[s, k, i, h]))or self.almost_equal(x_resemble,np.ceil(x_cp[s, k, i, h]))):
+                pass
+            else:
                 z_skijqh[s, k, i, j, q, h], z_skijqh[s_hat, k, i, j, q, h] = self.change_z_core(
                     z_skijqh[s, k, i, j, q, h], z_skijqh[s_hat, k, i, j, q, h])
 
