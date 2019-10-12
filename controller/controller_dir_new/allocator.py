@@ -771,7 +771,7 @@ class allocator():
 
     def almost_equal(self,x,N):
         # print(x,N)
-        if x - N >-0.05 and x - N <=0.05:
+        if x - N >-0.01 and x - N <=0.01:
             return True
         else:
             return False
