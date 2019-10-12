@@ -136,7 +136,7 @@ class allocator():
         return schedule_for_all_client_dict,allocation_for_all_server_dict
 
 
-    def process_and_save_data(self,cost,x,y,cost_opt,cost_heu,overhead,continuous_x):
+    def process_and_save_data(self,cost,x,y,cost_opt,cost_heu,overhead,continuous_x,hue_x):
         avg_latency,avg_bw,avg_acc = [],[],[]
         # complete_time = 0
 
@@ -167,7 +167,7 @@ class allocator():
 
             re = {'avg_latency':avg_latency,'avg_bw':avg_bw,'avg_acc':avg_acc,'history':self.history_list,'cost':cost,
                   'cost_opt':cost_opt,'cost_heu':cost_heu,'x':xx,'y':yy,'overhead':overhead,'complete':self.complete_time,
-                  'continuous_x':continuous_x
+                  'continuous_x':continuous_x, 'heu_x':heu_x
                   }
             output = open(f'controller_dir_new/results/result_{self.version_stg}_{self.device_type}_{self.time_slot}_{self.inter}.pkl','wb')
             pickle.dump(re,output)
@@ -203,7 +203,7 @@ class allocator():
         try:
             _,new_y,cost= self.optimation_solver(m,K,I,S,Qt,integer_x,self.var_y(m,K,I,S,Qt),1)
             endtime = timeit.default_timer()
-            cost_heu = self.heu_cost(K,I,S,continuous_x,Qt,m)
+            cost_heu,heu_x = self.heu_cost(K,I,S,continuous_x,Qt,m)
             if self.inter ==0:
                 self.last_a2 = cost
                 self.last_heu = cost_heu
@@ -212,11 +212,12 @@ class allocator():
                 self.last_y = new_y
                 self.overhead = endtime-start_time
                 self.continuous_x = continuous_x
+                self.heu_x = heu_x
 
-            self.process_and_save_data(self.last_a2,self.last_x,self.last_y,self.last_opt,self.last_heu,self.overhead,self.continuous_x)
+            self.process_and_save_data(self.last_a2,self.last_x,self.last_y,self.last_opt,self.last_heu,self.overhead,self.continuous_x,self.heu_x)
         except:
             print('Something wrong in gurobi')
-            self.process_and_save_data(self.last_a2,self.last_x,self.last_y,self.last_opt,self.last_heu,self.overhead,self.continuous_x)
+            self.process_and_save_data(self.last_a2,self.last_x,self.last_y,self.last_opt,self.last_heu,self.overhead,self.continuous_x,self.heu_x)
 
 
 
@@ -230,7 +231,7 @@ class allocator():
     def heu_cost(self,K,I,S,continuous_x,Qt,m):
         integer_x = self.heuristic_rounding(K, I, S, continuous_x)
         _,new_y,cost_heu= self.optimation_solver(m,K,I,S,Qt,integer_x,self.var_y(m,K,I,S,Qt),1)
-        return cost_heu
+        return cost_heu,integer_x
 
 
 
