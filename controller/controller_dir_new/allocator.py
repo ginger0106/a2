@@ -211,7 +211,7 @@ class allocator():
                 self.last_x = integer_x
                 self.last_y = new_y
                 self.overhead = endtime-start_time
-                self.continuous_x = continuous_x
+                self.continuous_x =dict(continuous_x)
                 self.heu_x = heu_x
 
             self.process_and_save_data(self.last_a2,self.last_x,self.last_y,self.last_opt,self.last_heu,self.overhead,self.continuous_x,self.heu_x)
