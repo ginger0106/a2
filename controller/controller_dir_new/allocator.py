@@ -136,7 +136,7 @@ class allocator():
         return schedule_for_all_client_dict,allocation_for_all_server_dict
 
 
-    def process_and_save_data(self,cost,x,y,cost_opt,cost_heu,overhead):
+    def process_and_save_data(self,cost,x,y,cost_opt,cost_heu,overhead,continuous_x):
         avg_latency,avg_bw,avg_acc = [],[],[]
         # complete_time = 0
 
@@ -166,7 +166,9 @@ class allocator():
             yy = {str(key):val for key,val in y.items()}
 
             re = {'avg_latency':avg_latency,'avg_bw':avg_bw,'avg_acc':avg_acc,'history':self.history_list,'cost':cost,
-                  'cost_opt':cost_opt,'cost_heu':cost_heu,'x':xx,'y':yy,'overhead':overhead,'complete':self.complete_time}
+                  'cost_opt':cost_opt,'cost_heu':cost_heu,'x':xx,'y':yy,'overhead':overhead,'complete':self.complete_time,
+                  'continuous_x':continuous_x
+                  }
             output = open(f'controller_dir_new/results/result_{self.version_stg}_{self.device_type}_{self.time_slot}_{self.inter}.pkl','wb')
             pickle.dump(re,output)
             # self.inter+=1
@@ -209,11 +211,12 @@ class allocator():
                 self.last_x = integer_x
                 self.last_y = new_y
                 self.overhead = endtime-start_time
+                self.continuous_x = continuous_x
 
-            self.process_and_save_data(self.last_a2,self.last_x,self.last_y,self.last_opt,self.last_heu,self.overhead)
+            self.process_and_save_data(self.last_a2,self.last_x,self.last_y,self.last_opt,self.last_heu,self.overhead,self.continuous_x)
         except:
             print('Something wrong in gurobi')
-            self.process_and_save_data(self.last_a2,self.last_x,self.last_y,self.last_opt,self.last_heu,self.overhead)
+            self.process_and_save_data(self.last_a2,self.last_x,self.last_y,self.last_opt,self.last_heu,self.overhead,self.continuous_x)
 
 
 
@@ -525,11 +528,11 @@ class allocator():
         url = f'http://{worker_addr}:{port}/v1/models/{model_name}_dcp_{model_ver}:classify'
         return url
 
-    def set_construct(self, S, Qt, z_skijqh, y_fractional , k, i, j, h):
+    def set_construct(self, S, Qt, z_skijqh, y_fractional , k, i, j, h,q_lst):
         # z_skijqh={}
         set_all_lst = [] #[{q:[1,2,3]}]
         overlap_set = [] # [s1:[q1,q2]]
-        for q in range (len (Qt[k])):
+        for q in q_lst:#for q in range (len (Qt[k])):
             set_q_dict = Qt[k][q]['avai_server_set'].copy()
             for s in S:
                 # s = item[0]
@@ -597,64 +600,86 @@ class allocator():
             for j in range (self.J):
                 for i in range(I):
                     for h in self.adaptive_H(self.device_type,k,i):
-                        x_fractional, y_fractional = self.compute_omiga(Qt,k,S,i,j,h,x_cp,y)
+                        x_fractional, y_fractional,q_lst,s_lst = self.compute_omiga(Qt,k,S,i,j,h,x_cp,y)
                         # if y_fractional != {}:
-                        overlap_set, set_all_lst = self.set_construct(S, Qt, z_skijqh, y_fractional , k, i, j, h)
+                        overlap_set, set_all_lst = self.set_construct(s_lst, Qt, z_skijqh, y_fractional , k, i, j, h,q_lst)
+                        q_in_thetaall = self.get_q_in_thetaall(Qt,k,set_all_lst)
                         if len(overlap_set) !=0:
-                            z_skijqh = self.change_z(Qt,k,i, j,h,z_skijqh,overlap_set,set_all_lst,x_cp,S)
-                            results = self.resemble_x(S,Qt,k, i,j, h,z_skijqh,x)
+                            for q in q_in_thetaall:
+                                theta_q = self.get_theta_q(Qt,k,q)
+                                s_hat = self.get_s_hat(theta_q,set_all_lst,overlap_set)
+                                z_skijqh = self.change_z(Qt,k,i, j,h,z_skijqh,x_cp,theta_q,s_hat,q)
+                        self.resemble_x(S,Qt,k, i,j, h,z_skijqh,x)
+        return x
 
-        return results
+    def get_s_hat(self,theta_q,set_all_lst,overlap_set):
+        if theta_q in set_all_lst:
+            s_hat = self.find_s_hat(theta_q, overlap_set)
+            return s_hat
+
+    def get_theta_q(self,Qt,k,q):
+        theta_q = Qt[k][q]['avai_server_set'].copy()
+        return theta_q
+
     def compute_omiga(self,Qt,k,S,i,j,h,x,y):
         x_fractional = {}
         y_fractional ={}
+        q_lst = []
+        s_lst = []
         for q in range (len (Qt[k])):
             for s in S:
                 if not float(x[s, k, i, h]).is_integer ():
                     y_fractional[s, k, i, j, q, h] = y[s, k, i, j, q, h]
                     x_fractional[s, k, i, h] = x[s, k, i, h]
-        return x_fractional,y_fractional
+                    q_lst.append(q)
+                    s_lst.append(s)
+        return x_fractional,y_fractional,q_lst,s_lst
 
-    def change_z(self,Qt,k,i, j,h,z_skijqh,overlap_set,set_all_lst,x,S):
+    def get_q_in_thetaall(self,Qt,k,set_all_lst):
+        q_in_thetaall = []
+        for q in range (len (Qt[k])):
+            theta_q = self.get_theta_q(Qt,k,q)
+            if theta_q in set_all_lst:
+                q_in_thetaall.append(q)
+        return q_in_thetaall
+
+
+    def change_z(self,Qt,k,i, j,h,z_skijqh,x,theta_q,s_hat,q):
 
         x_cp = x.copy()
-        for q in range (len (Qt[k])):
-            theta_q = Qt[k][q]['avai_server_set'].copy ()
-            if theta_q in set_all_lst:
-                s_hat = self.find_s_hat(theta_q,overlap_set)
-                if len(theta_q)<= 1:
-                    continue
-                else:
-                    theta_q.remove (s_hat)
-                    # print(s_hat,55555)
+       #  for q in q_lst:#for q in range (len (Qt[k])):
+       # # for q in range (len (Qt[k])):
+       #      theta_q = Qt[k][q]['avai_server_set'].copy ()
+       #      if theta_q in set_all_lst:
+       #          s_hat = self.find_s_hat(theta_q,overlap_set)
+                # if len(theta_q)<= 1:
+                #     continue
+                # else:
+        theta_q.remove (s_hat)
+        for s in theta_q:
+            # z = z_skijqh[s, k, i, j, q, h]
+            # z_hat = z_skijqh[s_hat, k, i, j, q, h]
 
-                    for s in theta_q:
-                        # z = z_skijqh[s, k, i, j, q, h]
-                        # z_hat = z_skijqh[s_hat, k, i, j, q, h]
+            # if k == 'mobile':
+                # print(s,z_hat,z,i,j,h)
+            # print(sum_s,sum_s_hat)
+            # if float(sum_s).is_integer() and sum_s>0:
+            #     print(4999)
+            #     continue
+            # print(self.compute_z_in_s(s,Qt,k, i,h,z_skijqh,j),self.compute_z_in_s(s_hat,Qt,k, i,h,z_skijqh,j))
+            # print(self.compute_z_in_s(s,Qt,k, i,h,z_skijqh,j),np.ceil(x[s, k, i, h])-0.1 ,self.compute_z_in_s(s_hat,Qt,k, i,h,z_skijqh,j), np.ceil(x[s_hat, k, i, h])-0.01)
+            # upper = max(x[s_hat, k, i, h],x[s, k, i, h])
 
-                        # if k == 'mobile':
-                            # print(s,z_hat,z,i,j,h)
-                        # print(sum_s,sum_s_hat)
-                        # if float(sum_s).is_integer() and sum_s>0:
-                        #     print(4999)
-                        #     continue
-                        # print(self.compute_z_in_s(s,Qt,k, i,h,z_skijqh,j),self.compute_z_in_s(s_hat,Qt,k, i,h,z_skijqh,j))
-                        # print(self.compute_z_in_s(s,Qt,k, i,h,z_skijqh,j),np.ceil(x[s, k, i, h])-0.1 ,self.compute_z_in_s(s_hat,Qt,k, i,h,z_skijqh,j), np.ceil(x[s_hat, k, i, h])-0.01)
-                        # upper = max(x[s_hat, k, i, h],x[s, k, i, h])
-
-                            # break
-                        # print (99,self.compute_z_in_s(s_hat,Qt,k, i,h,z_skijqh,j),self.compute_z_in_s(s,Qt,k, i,h,z_skijqh,j),np.ceil(x[s, k, i, h]), np.floor (x[s, k, i, h]), k)
+                # break
+            # print (99,self.compute_z_in_s(s_hat,Qt,k, i,h,z_skijqh,j),self.compute_z_in_s(s,Qt,k, i,h,z_skijqh,j),np.ceil(x[s, k, i, h]), np.floor (x[s, k, i, h]), k)
 #################
-                        #    print (99, self.compute_z_in_s (s, Qt, k, i, h, z_skijqh, j), np.floor (x_cp[s, k, i, h]), s, k, i,h, x_cp[s, k, i, h])
+            #    print (99, self.compute_z_in_s (s, Qt, k, i, h, z_skijqh, j), np.floor (x_cp[s, k, i, h]), s, k, i,h, x_cp[s, k, i, h])
 
-                        x_resemble = self.compute_z_in_s(s,Qt,k, i,h,z_skijqh)
-                        print(z_skijqh[s, k, i, j, q, h], z_skijqh[s_hat, k, i, j, q, h],x_resemble)
-                        if  self.almost_equal(x_resemble,np.floor (x_cp[s, k, i, h]))or self.almost_equal(x_resemble,np.ceil(x_cp[s, k, i, h])):
-                            print('integer')
-                        else:
-                            print('not')
-                            z_skijqh[s, k, i, j, q, h], z_skijqh[s_hat, k, i, j, q, h] = self.change_z_core(
-                                z_skijqh[s, k, i, j, q, h], z_skijqh[s_hat, k, i, j, q, h])
+            x_resemble = self.compute_z_in_s(s,Qt,k, i,h,z_skijqh)
+            #(z_skijqh[s, k, i, j, q, h], z_skijqh[s_hat, k, i, j, q, h],x_resemble)
+            if  not (self.almost_equal(x_resemble,np.floor (x_cp[s, k, i, h]))or self.almost_equal(x_resemble,np.ceil(x_cp[s, k, i, h]))):
+                z_skijqh[s, k, i, j, q, h], z_skijqh[s_hat, k, i, j, q, h] = self.change_z_core(
+                    z_skijqh[s, k, i, j, q, h], z_skijqh[s_hat, k, i, j, q, h])
 
                         # break
                             # return z_skijqh
