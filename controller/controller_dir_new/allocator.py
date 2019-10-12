@@ -194,7 +194,7 @@ class allocator():
         m = Model ('PLACEMENT')
         x = self.var_x(m,K,I,S)
         y = self.var_y(m,K,I,S,Qt)
-        continuous_x,continuous_y,cost_opt = self.optimation_solver(m,K,I,S,Qt,x,y,0)
+        continuous_x,continuous_y,cost_opt,continuous_x_dict = self.optimation_solver(m,K,I,S,Qt,x,y,0)
         if self.version_stg =='heu':
             integer_x = self.heuristic_rounding(K,I,S,continuous_x)
         else:
@@ -211,7 +211,7 @@ class allocator():
                 self.last_x = integer_x
                 self.last_y = new_y
                 self.overhead = endtime-start_time
-                self.continuous_x =dict(continuous_x)
+                self.continuous_x =continuous_x_dict
                 self.heu_x = heu_x
 
             self.process_and_save_data(self.last_a2,self.last_x,self.last_y,self.last_opt,self.last_heu,self.overhead,self.continuous_x,self.heu_x)
@@ -284,7 +284,15 @@ class allocator():
             y = m.getAttr ('x', y_skijqh)
             x = m.getAttr ('x',x_skih)
             c = self.get_cost (K, I, S, x, y)
-            return x,y,c
+            x_dict = {}
+
+            for s in S:
+                for k in K:
+                    for i in range(I):
+                        for h in self.adaptive_H(self.device_type, k, i):
+                            x_dict[s, k, i, h] = x[s, k, i, h]
+
+            return x,y,c,x_dict
         else:
             c = self.get_cost (K, I, S, x, y)
             return 0,m.getAttr ('x', y_skijqh),c
