@@ -167,7 +167,7 @@ class allocator():
 
             re = {'avg_latency':avg_latency,'avg_bw':avg_bw,'avg_acc':avg_acc,'history':self.history_list,'cost':cost,
                   'cost_opt':cost_opt,'cost_heu':cost_heu,'x':xx,'y':yy,'overhead':overhead,'complete':self.complete_time,
-                  'continuous_x':continuous_x,
+                  'continuous_x':continuous_x
                   #'heu_x':hue_x
                   }
             output = open(f'controller_dir_new/results/result_{self.version_stg}_{self.device_type}_{self.time_slot}_{self.inter}.pkl','wb')
