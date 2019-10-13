@@ -4,7 +4,7 @@ import math
 # DNS_list_path = 'controller_dir_new/config/DNS_list.txt'
 
 IMG_SIZE = np.load('controller_dir_new/measurements/IMG_SIZE.npy')
-MBV1ACC = np.load('controller_dir_new/measurements/mobile_v1_acc_new.npy')
+MBV1ACC = np.load('controller_dir_new/measurements/mobilenet_acc_1013.npy')
 MBV1FLP = np.array([1.1375, 1.1375 - 1.1375 * 0.4, 1.1375 - 1.1375 * 0.6, 1.1375 - 1.1375 * 0.8])
 
 RES18ACC = np.load('controller_dir_new/measurements/res18_acc_new.npy')
