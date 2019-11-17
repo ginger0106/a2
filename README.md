@@ -51,4 +51,4 @@ t 是指持续多久 单位 s
  所有结果保存在 controller 节点：
 /home/ubuntu/a2/controller/controller_dir_new/results/
 命名方式如下：（会被覆盖）
-![](media/15709654737752/15709664538484.jpg)
+results_methodname_device_time_1.pickle
