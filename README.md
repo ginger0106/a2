@@ -46,3 +46,9 @@ t 是指持续多久 单位 s
   -n 18 是开了 3 个 client process 在每个 client machine
  -debug 是指在 aws 上运行
  需要注意： 这里调用了 gurobi，需要在controller machine上 安装配置好
+ 
+ ---
+ 所有结果保存在 controller 节点：
+/home/ubuntu/a2/controller/controller_dir_new/results/
+命名方式如下：（会被覆盖）
+![](media/15709654737752/15709664538484.jpg)
