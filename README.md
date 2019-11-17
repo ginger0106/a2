@@ -9,6 +9,7 @@
 - aiohttp
 - gurobipy
 - pillow
+- tcconfig
 
 ## gurobi 下载地址
 https://packages.gurobi.com/8.1/gurobi8.1.1_linux64.tar.gz
